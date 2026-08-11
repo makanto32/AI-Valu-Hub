@@ -18,4 +18,14 @@ coverage/
 .DS_Store
 *.db-shm
 *.db-wal
-data/fabric/
+
+# Local runtime data (SQLite DB, uploaded context files, Fabric extracts)
+data/
+
+# Generated / heavy binary assets are not versioned
+*.mp4
+*.pptx
+*.pdf
+
+# Office lock files
+~$*

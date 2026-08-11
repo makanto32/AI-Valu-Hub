@@ -84,16 +84,25 @@ See [docs/APPLICATION_OVERVIEW.md](docs/APPLICATION_OVERVIEW.md#roadmap) for the
 - Admin center with token/cost/ROI governance
 - Multi-tenant IaC and packaged deployment per client
 
-## Structure
-- `frontend`: React + Vite.
-- `api`: FastAPI.
-- `workers`: reserved for future capabilities.
-- `infra`: Infrastructure as Code (Bicep) for Azure deployment.
-- `docs`: architecture references, guides, and scope notes.
+## Repository structure
+
+```
+├── api/                  FastAPI backend (endpoints, models, context engine, storage)
+├── frontend/             React + Vite UI
+├── infra/                Infrastructure as Code (Bicep/ARM) + Azure deployment scripts
+├── scripts/              Demo seeding and Microsoft Fabric sync helpers
+├── docs/                 Architecture reference, application overview, installation guide
+├── index.html            Control center: entry point to all interactive diagrams
+├── architecture-diagram.html / .es.html    Component architecture (EN / ES)
+├── architecture-fabric-live.html           Fabric + executive dashboard architecture
+└── ai-value-hub-demo.html                  End-to-end flow diagram
+```
+
+Runtime data (SQLite database, uploaded context documents) is created locally under `data/` and is not versioned.
 
 ## Client-facing reference documentation
 - Architecture guide: [docs/CLIENT_ARCHITECTURE_REFERENCE.md](docs/CLIENT_ARCHITECTURE_REFERENCE.md)
-- Professional PDF diagram: [docs/AI_Opportunity_Hub_Architecture_Reference.pdf](docs/AI_Opportunity_Hub_Architecture_Reference.pdf)
+- Application overview: [docs/APPLICATION_OVERVIEW.md](docs/APPLICATION_OVERVIEW.md)
 
 ## Run the API
 ```bash
