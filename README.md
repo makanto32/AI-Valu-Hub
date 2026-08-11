@@ -14,12 +14,12 @@ See the full terms in [LICENSE](LICENSE).
 - **[Client Architecture Reference](docs/CLIENT_ARCHITECTURE_REFERENCE.md)** — detailed architecture reference for partners/clients.
 
 ## 🚀 Live views (GitHub Pages)
-- **📊 [Control Center](https://makanto32.github.io/AI-Value-Hub/)** — main navigation menu
-- **💡 [Flow Diagram](https://makanto32.github.io/AI-Value-Hub/ai-value-hub-demo.html)** — visual walkthrough of the demo
-- **🏗️ [Component Architecture (EN)](https://makanto32.github.io/AI-Value-Hub/architecture-diagram.html)** — full technical diagram
-- **🏗️ [Component Architecture (ES)](https://makanto32.github.io/AI-Value-Hub/architecture-diagram.es.html)** — Spanish version
-- **📈 [Fabric + Dashboard Architecture](https://makanto32.github.io/AI-Value-Hub/architecture-fabric-live.html)** — Microsoft Fabric live integration for executive metrics
-- **📖 [Use Case Factory](https://makanto32.github.io/AI-Value-Hub/AI_Use_Case_Factory_Company_Context_Engine_EN.html)** — executive reference document
+- **📊 [Control Center](https://makanto32.github.io/AI-Valu-Hub/)** — main navigation menu
+- **💡 [Flow Diagram](https://makanto32.github.io/AI-Valu-Hub/ai-value-hub-demo.html)** — visual walkthrough of the demo
+- **🏗️ [Component Architecture (EN)](https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.html)** — full technical diagram
+- **🏗️ [Component Architecture (ES)](https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.es.html)** — Spanish version
+- **📈 [Fabric + Dashboard Architecture](https://makanto32.github.io/AI-Valu-Hub/architecture-fabric-live.html)** — Microsoft Fabric live integration for executive metrics
+- **📖 [Use Case Factory](https://makanto32.github.io/AI-Valu-Hub/AI_Use_Case_Factory_Company_Context_Engine_EN.html)** — executive reference document
 
 ## Microsoft Fabric integration
 - Semantic provider enabled for the executive dashboard via Power BI / Fabric.

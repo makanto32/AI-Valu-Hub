@@ -16,7 +16,7 @@ This guide covers the two supported ways to run AI Value Hub: a **local run** (f
 ### Steps
 ```bash
 # 1. Clone the repository
-git clone https://github.com/makanto32/AI-Value-Hub.git
+git clone https://github.com/makanto32/AI-Valu-Hub.git
 cd AI-Value-Hub
 
 # 2. Start the API
@@ -49,7 +49,7 @@ This provisions the foundation resources (Container Apps environment, Storage, K
 ### Steps
 ```powershell
 # 1. Clone the repository
-git clone https://github.com/makanto32/AI-Value-Hub.git
+git clone https://github.com/makanto32/AI-Valu-Hub.git
 cd AI-Value-Hub/infra
 
 # 2. Log in to Azure (if not already)

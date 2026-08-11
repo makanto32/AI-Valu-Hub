@@ -11,18 +11,18 @@ Este repositorio está configurado para servir archivos HTML directamente a trav
 3. Click en **Save**
 
 Después de 1-2 minutos, tu sitio estará disponible en:
-**https://makanto32.github.io/AI-Opportunity-Hub/**
+**https://makanto32.github.io/AI-Valu-Hub/**
 
 ## Acceso directo a las vistas
 
 Una vez habilitado GitHub Pages, accede a:
 
-- **Inicio**: https://makanto32.github.io/AI-Opportunity-Hub/index.html
-- **AI Value Hub Demo**: https://makanto32.github.io/AI-Opportunity-Hub/ai-value-hub-demo.html
-- **Arquitectura (EN)**: https://makanto32.github.io/AI-Opportunity-Hub/architecture-diagram.html
-- **Arquitectura (ES)**: https://makanto32.github.io/AI-Opportunity-Hub/architecture-diagram.es.html
-- **Arquitectura Fabric + Dashboard**: https://makanto32.github.io/AI-Opportunity-Hub/architecture-fabric-live.html
-- **Use Case Factory**: https://makanto32.github.io/AI-Opportunity-Hub/AI_Use_Case_Factory_Company_Context_Engine_EN.html
+- **Inicio**: https://makanto32.github.io/AI-Valu-Hub/index.html
+- **AI Value Hub Demo**: https://makanto32.github.io/AI-Valu-Hub/ai-value-hub-demo.html
+- **Arquitectura (EN)**: https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.html
+- **Arquitectura (ES)**: https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.es.html
+- **Arquitectura Fabric + Dashboard**: https://makanto32.github.io/AI-Valu-Hub/architecture-fabric-live.html
+- **Use Case Factory**: https://makanto32.github.io/AI-Valu-Hub/AI_Use_Case_Factory_Company_Context_Engine_EN.html
 
 ## Archivos incluidos
 
