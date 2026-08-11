@@ -9,17 +9,33 @@ See the full terms in [LICENSE](LICENSE).
 ## 📚 Start here
 - **[Application Overview](docs/APPLICATION_OVERVIEW.md)** — how the platform works, core flows, and roadmap.
 - **[Installation Guide](docs/INSTALLATION_GUIDE.md)** — simplest path to run locally or deploy to Azure.
-- **[Component Architecture Diagram](architecture-diagram.html)** — interactive technical architecture view.
-- **[Flow Diagram](ai-value-hub-demo.html)** — interactive end-to-end flow walkthrough.
 - **[Client Architecture Reference](docs/CLIENT_ARCHITECTURE_REFERENCE.md)** — detailed architecture reference for partners/clients.
 
-## 🚀 Live views (GitHub Pages)
+> ⚠️ **Note about the diagram files below:** `architecture-diagram.html` and `ai-value-hub-demo.html` are interactive pages, but GitHub's file browser only shows their raw source code when you click them — it does not render HTML. To actually see them rendered, use one of the two options below.
+
+## 🖥️ Viewing the interactive diagrams
+
+### Option A — Live view (once GitHub Pages is enabled)
+Requires GitHub Pages to be turned on for this repo (Settings → Pages → Source: `main` / root) and, since the repo is private, requires being signed in to GitHub with read access to it.
 - **📊 [Control Center](https://makanto32.github.io/AI-Valu-Hub/)** — main navigation menu
 - **💡 [Flow Diagram](https://makanto32.github.io/AI-Valu-Hub/ai-value-hub-demo.html)** — visual walkthrough of the demo
 - **🏗️ [Component Architecture (EN)](https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.html)** — full technical diagram
 - **🏗️ [Component Architecture (ES)](https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.es.html)** — Spanish version
 - **📈 [Fabric + Dashboard Architecture](https://makanto32.github.io/AI-Valu-Hub/architecture-fabric-live.html)** — Microsoft Fabric live integration for executive metrics
 - **📖 [Use Case Factory](https://makanto32.github.io/AI-Valu-Hub/AI_Use_Case_Factory_Company_Context_Engine_EN.html)** — executive reference document
+
+### Option B — Open locally (always works, no Pages needed)
+```bash
+git clone https://github.com/makanto32/AI-Valu-Hub.git
+cd AI-Valu-Hub
+# Windows
+start index.html
+# macOS
+open index.html
+# Linux
+xdg-open index.html
+```
+This opens the same navigation menu and diagrams directly in your default browser, rendered exactly as they would be on Pages.
 
 ## Microsoft Fabric integration
 - Semantic provider enabled for the executive dashboard via Power BI / Fabric.
