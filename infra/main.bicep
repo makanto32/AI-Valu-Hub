@@ -1,6 +1,6 @@
 targetScope = 'resourceGroup'
 
-@description('Primary Azure region for AI Opportunity Hub resources.')
+@description('Primary Azure region for AI Value Hub resources.')
 param location string = resourceGroup().location
 
 @description('Base name used to compose Azure resource names.')
@@ -11,7 +11,7 @@ param environmentName string = 'dev'
 
 @description('Optional tags to stamp across provisioned resources.')
 param tags object = {
-  application: 'AI Opportunity Hub'
+  application: 'AI Value Hub'
   environment: environmentName
   managedBy: 'Bicep'
 }

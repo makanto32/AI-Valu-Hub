@@ -1,8 +1,12 @@
 # Installation Guide
 
-This guide covers the two supported ways to run AI Value Hub: a **local run** (fastest way to try it) and an **Azure deployment** (for a shared, cloud-hosted environment).
+This guide covers the supported ways to run AI Value Hub: a **local run** (fastest way to try it) and an **Azure deployment** (for a shared, cloud-hosted environment).
 
-> **Note on "Deploy to Azure" buttons:** the standard Azure Portal "Deploy to Azure" button works by fetching the ARM/Bicep template from a **public** URL. Since this repository is **private**, that button cannot resolve the template and will fail with an access error. Instead, this guide provides a **one-command deployment script** that achieves the same outcome (`az deployment group create`) without requiring the repository to be public.
+## Fastest path — Deploy to Azure in one click
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmakanto32%2FAI-Valu-Hub%2Fmain%2Finfra%2Fmain.json)
+
+This opens the Azure Portal with the ARM template (`infra/main.json`) pre-loaded. Pick a subscription and resource group, review the parameters, and click Create. No local tooling required.
 
 ---
 

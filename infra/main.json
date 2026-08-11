@@ -13,7 +13,7 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Primary Azure region for AI Opportunity Hub resources."
+        "description": "Primary Azure region for AI Value Hub resources."
       }
     },
     "appName": {
@@ -33,7 +33,7 @@
     "tags": {
       "type": "object",
       "defaultValue": {
-        "application": "AI Opportunity Hub",
+        "application": "AI Value Hub",
         "environment": "[parameters('environmentName')]",
         "managedBy": "Bicep"
       },

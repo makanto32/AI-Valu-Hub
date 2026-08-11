@@ -15,8 +15,8 @@ See the full terms in [LICENSE](LICENSE).
 
 ## 🖥️ Viewing the interactive diagrams
 
-### Option A — Live view (once GitHub Pages is enabled)
-Requires GitHub Pages to be turned on for this repo (Settings → Pages → Source: `main` / root) and, since the repo is private, requires being signed in to GitHub with read access to it.
+### Option A — Live view (GitHub Pages)
+Published automatically from `main` via GitHub Actions.
 - **📊 [Control Center](https://makanto32.github.io/AI-Valu-Hub/)** — main navigation menu
 - **💡 [Flow Diagram](https://makanto32.github.io/AI-Valu-Hub/ai-value-hub-demo.html)** — visual walkthrough of the demo
 - **🏗️ [Component Architecture (EN)](https://makanto32.github.io/AI-Valu-Hub/architecture-diagram.html)** — full technical diagram
@@ -112,4 +112,11 @@ Frontend: http://localhost:5173
 API: http://localhost:8000
 
 ## Deploy to Azure
-See [docs/INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md) for the simplest deployment path. Since this repository is private, the standard "Deploy to Azure" portal button cannot be used (it requires a publicly reachable template); instead we provide a one-command deployment script.
+
+One-click deployment of the Azure foundation (Container Apps environment, Storage, Key Vault, Log Analytics, Application Insights, Managed Identity):
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmakanto32%2FAI-Valu-Hub%2Fmain%2Finfra%2Fmain.json)
+
+The button opens the Azure Portal with the ARM template pre-loaded. Select a subscription and resource group, adjust parameters if needed, and deploy.
+
+Prefer the command line? See [docs/INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md) for the equivalent one-command script and for publishing the application containers afterwards.
