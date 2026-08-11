@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Value Hub - Views</title>
+    <style>
+      :root {
+        --bg: #07111f;
+        --panel: #0f1c33;
+        --panel-2: #142742;
+        --text: #f4f7ff;
+        --muted: #9eb0cf;
+        --accent: #4f9cf0;
+        --accent-2: #22c9a0;
+        --line: rgba(255,255,255,0.12);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, var(--bg), #0b1628 55%, #101d31);
+        color: var(--text);
+      }
+      .page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+      }
+      .hero {
+        background: rgba(15, 28, 51, 0.9);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 18px 40px rgba(0,0,0,.25);
+      }
+      .hero h1 { margin: 0 0 10px; font-size: 2rem; }
+      .hero p { margin: 0; color: var(--muted); max-width: 760px; line-height: 1.6; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: linear-gradient(180deg, var(--panel), var(--panel-2));
+        min-height: 220px;
+      }
+      .card h2 { margin: 0 0 8px; font-size: 1.1rem; }
+      .card p { margin: 0; color: var(--muted); line-height: 1.5; }
+      .card a {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 10px 14px;
+        text-decoration: none;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        color: #fff;
+        font-weight: 700;
+        width: fit-content;
+      }
+      .badge {
+        display: inline-block;
+        width: fit-content;
+        margin-bottom: 10px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(79, 156, 240, 0.16);
+        color: #8fbcf7;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="hero">
+        <h1>AI Value Hub</h1>
+        <p>These views are ready to be opened as web pages from the repository, serving as a visual reference for the architecture, demos, and diagrams of the project.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div>
+            <span class="badge">Architecture</span>
+            <h2>Detailed Architecture</h2>
+            <p>Professional view of the high-level design and main system components.</p>
+          </div>
+          <a href="architecture-diagram.html" target="_blank" rel="noopener">Open</a>
+        </div>
+
+        <div class="card">
+          <div>
+            <span class="badge">Architecture</span>
+            <h2>Detailed Architecture (ES)</h2>
+            <p>Spanish version of the architecture, to share with stakeholders and teams.</p>
+          </div>
+          <a href="architecture-diagram.es.html" target="_blank" rel="noopener">Open</a>
+        </div>
+
+        <div class="card">
+          <div>
+            <span class="badge">Fabric</span>
+            <h2>Fabric + Dashboard Architecture</h2>
+            <p>Live view of the Microsoft Fabric integration powering the executive dashboard.</p>
+          </div>
+          <a href="architecture-fabric-live.html" target="_blank" rel="noopener">Open</a>
+        </div>
+
+        <div class="card">
+          <div>
+            <span class="badge">Demo</span>
+            <h2>AI Value Hub Flow Demo</h2>
+            <p>Visual walkthrough of the demo flow and product value blocks.</p>
+          </div>
+          <a href="ai-value-hub-demo.html" target="_blank" rel="noopener">Open</a>
+        </div>
+
+        <div class="card">
+          <div>
+            <span class="badge">Reference</span>
+            <h2>Use Case Factory</h2>
+            <p>Executive reference document on the business context and architecture proposal.</p>
+          </div>
+          <a href="AI_Use_Case_Factory_Company_Context_Engine_EN.html" target="_blank" rel="noopener">Open</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

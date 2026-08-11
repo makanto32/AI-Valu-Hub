@@ -1,0 +1,339 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.43.8.12551",
+      "templateHash": "211668190968432379"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Primary Azure region for AI Opportunity Hub resources."
+      }
+    },
+    "appName": {
+      "type": "string",
+      "defaultValue": "aiopportunityhub",
+      "metadata": {
+        "description": "Base name used to compose Azure resource names."
+      }
+    },
+    "environmentName": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Deployment environment suffix such as dev, test or prod."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {
+        "application": "AI Opportunity Hub",
+        "environment": "[parameters('environmentName')]",
+        "managedBy": "Bicep"
+      },
+      "metadata": {
+        "description": "Optional tags to stamp across provisioned resources."
+      }
+    },
+    "enablePostgres": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable PostgreSQL Flexible Server provisioning."
+      }
+    },
+    "enableAcr": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable Azure Container Registry provisioning."
+      }
+    },
+    "postgresAdminLogin": {
+      "type": "string",
+      "defaultValue": "aihubadmin",
+      "metadata": {
+        "description": "Administrator login for PostgreSQL when enabled."
+      }
+    },
+    "postgresAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Administrator password for PostgreSQL when enabled."
+      }
+    }
+  },
+  "variables": {
+    "effectivePostgresPassword": "[if(parameters('enablePostgres'), parameters('postgresAdminPassword'), 'DisabledPostgres123!')]",
+    "normalizedApp": "[toLower(replace(parameters('appName'), '-', ''))]",
+    "shortApp": "[take(variables('normalizedApp'), 14)]",
+    "storageName": "[take(format('{0}{1}{2}', variables('shortApp'), parameters('environmentName'), uniqueString(resourceGroup().id)), 24)]",
+    "acrName": "[take(replace(format('{0}{1}acr{2}', variables('shortApp'), parameters('environmentName'), uniqueString(resourceGroup().id)), '-', ''), 50)]",
+    "logAnalyticsName": "[format('{0}-{1}-law', parameters('appName'), parameters('environmentName'))]",
+    "appInsightsName": "[format('{0}-{1}-appi', parameters('appName'), parameters('environmentName'))]",
+    "containerAppsEnvName": "[format('{0}-{1}-cae', parameters('appName'), parameters('environmentName'))]",
+    "keyVaultName": "[take(replace(format('{0}-{1}-kv-{2}', parameters('appName'), parameters('environmentName'), uniqueString(resourceGroup().id)), '-', ''), 24)]",
+    "managedIdentityName": "[format('{0}-{1}-mi', parameters('appName'), parameters('environmentName'))]",
+    "postgresServerName": "[take(replace(format('{0}-{1}-psql-{2}', parameters('appName'), parameters('environmentName'), uniqueString(resourceGroup().id)), '-', ''), 63)]",
+    "blobServiceName": "default"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('logAnalyticsName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30
+      }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('appInsightsName')]",
+      "location": "[parameters('location')]",
+      "kind": "web",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('storageName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "minimumTlsVersion": "TLS1_2",
+        "allowBlobPublicAccess": false,
+        "supportsHttpsTrafficOnly": true,
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', variables('storageName'), variables('blobServiceName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', variables('storageName'), variables('blobServiceName'), 'documents')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageName'), variables('blobServiceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', variables('storageName'), variables('blobServiceName'), 'artifacts')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageName'), variables('blobServiceName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('enableAcr')]",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2023-07-01",
+      "name": "[variables('acrName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "adminUserEnabled": false,
+        "publicNetworkAccess": "Enabled",
+        "policies": {
+          "quarantinePolicy": {
+            "status": "disabled"
+          },
+          "retentionPolicy": {
+            "days": 14,
+            "status": "enabled"
+          },
+          "trustPolicy": {
+            "status": "disabled",
+            "type": "Notary"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('managedIdentityName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2023-07-01",
+      "name": "[variables('keyVaultName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "enableRbacAuthorization": true,
+        "enabledForDeployment": false,
+        "enabledForTemplateDeployment": false,
+        "enabledForDiskEncryption": false,
+        "publicNetworkAccess": "Enabled",
+        "softDeleteRetentionInDays": 90
+      }
+    },
+    {
+      "type": "Microsoft.App/managedEnvironments",
+      "apiVersion": "2024-03-01",
+      "name": "[variables('containerAppsEnvName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "appLogsConfiguration": {
+          "destination": "log-analytics",
+          "logAnalyticsConfiguration": {
+            "customerId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName')), '2023-09-01').customerId]",
+            "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName')), '2023-09-01').primarySharedKey]"
+          }
+        },
+        "workloadProfiles": [
+          {
+            "workloadProfileType": "Consumption",
+            "name": "Consumption"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('enablePostgres')]",
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "apiVersion": "2023-06-01-preview",
+      "name": "[variables('postgresServerName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "administratorLogin": "[parameters('postgresAdminLogin')]",
+        "administratorLoginPassword": "[variables('effectivePostgresPassword')]",
+        "authConfig": {
+          "activeDirectoryAuth": "Disabled",
+          "passwordAuth": "Enabled",
+          "tenantId": "[subscription().tenantId]"
+        },
+        "backup": {
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        },
+        "createMode": "Default",
+        "highAvailability": {
+          "mode": "Disabled"
+        },
+        "network": {
+          "publicNetworkAccess": "Enabled"
+        },
+        "storage": {
+          "storageSizeGB": 32,
+          "autoGrow": "Enabled"
+        },
+        "version": "16"
+      }
+    }
+  ],
+  "outputs": {
+    "containerAppsEnvironmentId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.App/managedEnvironments', variables('containerAppsEnvName'))]"
+    },
+    "containerAppsEnvironmentName": {
+      "type": "string",
+      "value": "[variables('containerAppsEnvName')]"
+    },
+    "acrLoginServer": {
+      "type": "string",
+      "value": "[if(parameters('enableAcr'), reference(resourceId('Microsoft.ContainerRegistry/registries', variables('acrName')), '2023-07-01').loginServer, '')]"
+    },
+    "acrResourceId": {
+      "type": "string",
+      "value": "[if(parameters('enableAcr'), resourceId('Microsoft.ContainerRegistry/registries', variables('acrName')), '')]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageName')]"
+    },
+    "storageBlobEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2023-05-01').primaryEndpoints.blob]"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "value": "[variables('keyVaultName')]"
+    },
+    "keyVaultUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2023-07-01').vaultUri]"
+    },
+    "applicationInsightsConnectionString": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2020-02-02').ConnectionString]"
+    },
+    "userAssignedIdentityId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]"
+    },
+    "userAssignedIdentityClientId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2023-01-31').clientId]"
+    },
+    "postgresServerName": {
+      "type": "string",
+      "value": "[if(parameters('enablePostgres'), variables('postgresServerName'), '')]"
+    },
+    "documentsContainerName": {
+      "type": "string",
+      "value": "documents"
+    },
+    "artifactsContainerName": {
+      "type": "string",
+      "value": "artifacts"
+    }
+  }
+}

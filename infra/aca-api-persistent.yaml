@@ -1,0 +1,50 @@
+location: East US
+name: aihub-api-dev
+type: Microsoft.App/containerApps
+identity:
+  type: SystemAssigned
+properties:
+  managedEnvironmentId: /subscriptions/c6df7118-f9b6-487b-9d63-c5850bfe7956/resourceGroups/rg-ai-opportunity-hub-dev/providers/Microsoft.App/managedEnvironments/aiopportunityhub-dev-cae
+  configuration:
+    activeRevisionsMode: Single
+    ingress:
+      external: true
+      targetPort: 8000
+      transport: Auto
+      allowInsecure: false
+    registries:
+      - server: ca11b904d530acr.azurecr.io
+        identity: system
+    secrets:
+      - name: storage-conn
+  template:
+    containers:
+      - name: aihub-api-dev
+        image: ca11b904d530acr.azurecr.io/aihub-api-dev:cli-containerapp-20260616111036842571
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+          ephemeralStorage: 2Gi
+        env:
+          - name: AIHUB_STORAGE_CONNECTION_STRING
+            secretRef: storage-conn
+          - name: AIHUB_STORAGE_CONTAINER
+            value: documents
+          - name: AIHUB_STORAGE_ACCOUNT_NAME
+            value: aiopportunityhdevyts4s2f
+          - name: AIHUB_STORAGE_ROLE_REFRESH
+            value: "20260531211116"
+          - name: AIHUB_LOCAL_BLOB_ROOT
+            value: /tmp/aihub-blob
+          - name: AIHUB_DB_PATH
+            value: /mnt/aihub-db/aihub.db
+        volumeMounts:
+          - volumeName: aihubdb
+            mountPath: /mnt/aihub-db
+    volumes:
+      - name: aihubdb
+        storageType: AzureFile
+        storageName: aihubdb
+    scale:
+      minReplicas: 1
+      maxReplicas: 10

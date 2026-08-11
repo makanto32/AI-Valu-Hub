@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Use Case Factory - Company Context Engine</title>
+<style>
+:root{--blue:#0078D4;--blue2:#004578;--bg:#f5f7fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e5e7eb;--soft:#eff6ff;--green:#107C10;--purple:#5C2D91;--orange:#CA5010}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:36px 42px}
+header h1{margin:0;font-size:40px}
+header p{margin:10px 0 0;font-size:18px;opacity:.95}
+.container{max-width:1280px;margin:auto;padding:26px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;background:var(--bg);z-index:10;padding:12px 0 18px}
+.tab-button{border:1px solid var(--line);background:#fff;color:var(--text);padding:11px 15px;border-radius:999px;cursor:pointer;font-weight:650}
+.tab-button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.tab-content{display:none}.tab-content.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 8px 18px rgba(15,23,42,.06)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.span-12{grid-column:span 12}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}.span-8{grid-column:span 8}
+h2{margin-top:0;font-size:28px}h3{margin-top:0;font-size:20px}p,li{line-height:1.6;color:#334155}
+table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;margin:12px 0}th,td{border-bottom:1px solid var(--line);padding:12px 14px;text-align:left;vertical-align:top}th{background:#f8fafc;color:#334155}
+pre{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:18px;overflow:auto;line-height:1.5}
+.tag{display:inline-block;background:var(--soft);color:#075985;border-radius:999px;padding:7px 11px;margin:4px;font-weight:650;font-size:13px}
+.arch{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;gap:12px;align-items:center}.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;min-height:155px;box-shadow:0 6px 15px rgba(15,23,42,.06)}.box.blue{border-top:6px solid var(--blue)}.box.green{border-top:6px solid var(--green)}.box.purple{border-top:6px solid var(--purple)}.arrow{text-align:center;font-size:28px;color:var(--muted)}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.node{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);padding:13px 15px;border-radius:12px;font-weight:650;min-width:165px}.flow .arrow{font-size:22px}
+.footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 10px}
+
+.component-diagram-shell{background:radial-gradient(120% 140% at 0% 0%,#1e2a52 0%,#111c3d 38%,#0a1024 100%);color:#dbeafe;border:1px solid #283865;border-radius:22px;padding:20px;overflow:hidden}
+.component-diagram-shell h2,.component-diagram-shell p{color:#dbeafe}
+.component-subtitle{color:#9fb5e8;margin-top:-6px}
+.component-map{position:relative;display:grid;grid-template-columns:1.2fr 1.5fr 1.2fr;gap:18px;min-height:610px;padding:14px;border-radius:18px;background-image:linear-gradient(rgba(120,143,197,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(120,143,197,.08) 1px,transparent 1px);background-size:36px 36px}
+.lane{display:flex;flex-direction:column;gap:14px;z-index:2}
+.lane-title{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#9fb5e8;font-weight:700}
+.comp-node{border-radius:16px;border:1px solid #39528f;background:linear-gradient(160deg,rgba(34,52,103,.95),rgba(17,28,61,.95));padding:14px 14px 12px;box-shadow:0 12px 26px rgba(5,10,30,.4)}
+.comp-node h4{margin:0 0 6px;font-size:19px;color:#eef4ff}
+.comp-node p{margin:0;font-size:13px;line-height:1.45;color:#bfd0f3}
+.comp-node .pill{display:inline-block;margin-top:10px;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.03em;background:rgba(128,162,255,.2);color:#dbeafe}
+.comp-node.accent-cyan{border-color:#4ab6dd;background:linear-gradient(160deg,rgba(30,84,114,.92),rgba(17,28,61,.95))}
+.comp-node.accent-green{border-color:#4fa68b;background:linear-gradient(160deg,rgba(27,93,80,.92),rgba(17,28,61,.95))}
+.comp-node.accent-violet{border-color:#8e6de8;background:linear-gradient(160deg,rgba(56,44,101,.92),rgba(17,28,61,.95))}
+.comp-node.accent-orange{border-color:#dc8b4e;background:linear-gradient(160deg,rgba(96,63,39,.92),rgba(17,28,61,.95))}
+.component-center-stack{display:flex;flex-direction:column;gap:14px}
+.connector-layer{position:absolute;inset:0;pointer-events:none;z-index:1}
+.component-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.legend-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(89,114,182,.24);border:1px solid #38508f;color:#dbeafe;font-size:12px}
+.dot{width:8px;height:8px;border-radius:999px}
+.dot.cyan{background:#62d7ff}.dot.green{background:#66d0b1}.dot.violet{background:#ad92ff}.dot.orange{background:#f3ad72}
+@media(max-width:900px){.span-12,.span-8,.span-6,.span-4,.span-3{grid-column:span 12}.arch{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}}
+@media(max-width:1100px){.component-map{grid-template-columns:1fr}.connector-layer{display:none}}
+</style>
+</head>
+<body>
+<header>
+<h1>AI Use Case Factory with Company Context Engine</h1>
+<p>Executive Architecture Blueprint — Agentic Platform for Enterprise AI Use Case Intake, Validation, Architecture and Value Tracking</p>
+</header>
+<div class="container">
+<div class="tabs">
+<button class="tab-button active" onclick="openTab(event,'purpose')">Purpose</button>
+<button class="tab-button" onclick="openTab(event,'vision')">Vision & Principles</button>
+<button class="tab-button" onclick="openTab(event,'architecture')">Architecture</button>
+<button class="tab-button" onclick="openTab(event,'context')">Company Context Engine</button>
+<button class="tab-button" onclick="openTab(event,'language')">Multilingual</button>
+<button class="tab-button" onclick="openTab(event,'flow')">End-to-End Flow</button>
+<button class="tab-button" onclick="openTab(event,'roles')">Roles</button>
+<button class="tab-button" onclick="openTab(event,'agents')">Agents</button>
+<button class="tab-button" onclick="openTab(event,'data')">Data Model</button>
+<button class="tab-button" onclick="openTab(event,'admin')">Admin Center</button>
+<button class="tab-button" onclick="openTab(event,'admin-components')">Admin Component Diagram</button>
+<button class="tab-button" onclick="openTab(event,'deployment')">Deployment</button>
+<button class="tab-button" onclick="openTab(event,'copilot')">Copilot Backlog</button>
+<button class="tab-button" onclick="openTab(event,'roadmap')">Roadmap</button>
+</div>
+
+<section id="purpose" class="tab-content active">
+<div class="card">
+<h2>1. Purpose of the Document</h2>
+<p>This document updates the reference architecture for an agentic platform that captures ideas from business users, validates their viability, enables a subsequent technical review, generates an architecture package, and supports tracking the value generated when ideas reach pilot or production.</p>
+<p>The main change is the incorporation of a <strong>Company Context Engine</strong> as a central component so each customer can deploy the solution in its own Azure environment, load or discover its business context, and personalize the experience without modifying code. The solution must also support multilingual interactions for business users, technical users and administrators.</p>
+</div>
+</section>
+
+<section id="vision" class="tab-content">
+<div class="card">
+<h2>2. Product Vision</h2>
+<p>The solution works as an <strong>AI Use Case Factory</strong>: an accelerator that converts scattered ideas into traceable, evaluated, prioritized, technically validated use cases connected to real business value.</p>
+<p>The user experience should feel like a single conversational copilot, even though specialized agents, formal gates, customer context, evaluators, telemetry, prompt governance and value measurement exist underneath.</p>
+</div>
+<div class="card">
+<h2>3. Design Principles</h2>
+<ol>
+<li>A single conversational copilot for the user; multiple specialized agents underneath.</li>
+<li>Company Context Engine as the source of adaptation per customer/tenant.</li>
+<li>Minimum initial context and progressive enrichment, avoiding long mandatory forms.</li>
+<li>Strict separation between business user, technical user and administrator.</li>
+<li>Use case state as the source of truth, not only conversational history.</li>
+<li>Multilingual support with language detection, internal normalization and response in the user's language.</li>
+<li>Structured outputs with JSON/Pydantic for evaluation, auditability and bias reduction.</li>
+<li>Formal gates between stages: idea, business viability, technical validation, architecture, pilot, production and realized value.</li>
+<li>Versioned and governed prompts, not hardcoded in the application code.</li>
+<li>Mandatory telemetry by agent, prompt, model, user, stage, tenant and use case.</li>
+<li>Cloud-native packaging for automated deployment on Azure Container Apps.</li>
+</ol>
+</div>
+</section>
+
+<section id="architecture" class="tab-content">
+<div class="card">
+<h2>4. Updated Logical Architecture</h2>
+<div class="arch">
+<div class="box blue"><h3>Experience Layer</h3><p>React + Vite multilingual web app for business users, technical users and administrators.</p><span class="tag">Business</span><span class="tag">Technical</span><span class="tag">Admin</span></div>
+<div class="arrow">→</div>
+<div class="box green"><h3>API & Agent Runtime</h3><p>FastAPI orchestrates endpoints, authentication, authorization, telemetry and Foundry agents.</p><span class="tag">FastAPI</span><span class="tag">Foundry Agent Service</span></div>
+<div class="arrow">→</div>
+<div class="box purple"><h3>Context, State & Value</h3><p>Company Context Engine, state store, semantic search, Blob Storage, observability and BI.</p><span class="tag">RAG</span><span class="tag">State</span><span class="tag">FinOps</span></div>
+</div>
+</div>
+<div class="card">
+<h3>Main Components</h3>
+<table>
+<tr><th>Component</th><th>Suggested Technology</th><th>Responsibility</th></tr>
+<tr><td>Web App</td><td>React + Vite</td><td>Multilingual interface for business users, technical users and administrators.</td></tr>
+<tr><td>API</td><td>Python FastAPI</td><td>Endpoints, authentication, authorization, orchestration and telemetry.</td></tr>
+<tr><td>Hosting</td><td>Azure Container Apps</td><td>Serverless deployment of frontend, API and workers.</td></tr>
+<tr><td>Agent Runtime</td><td>Microsoft Foundry Agent Service</td><td>Management of agents, tools, instructions and knowledge.</td></tr>
+<tr><td>LLM</td><td>Azure OpenAI / models in Foundry</td><td>Reasoning, evaluation, summarization and response composition.</td></tr>
+<tr><td>Company Context Engine</td><td>Python services + agents + RAG</td><td>Build and retrieve customer-specific context.</td></tr>
+<tr><td>State Store</td><td>Cosmos DB or PostgreSQL</td><td>TenantProfile, IdeaCase, decisions, gates, audit and metrics.</td></tr>
+<tr><td>Blob Storage</td><td>Azure Blob Storage</td><td>Source documents, attachments, evidence, exports and generated packages.</td></tr>
+<tr><td>Semantic Search</td><td>Azure AI Search</td><td>Semantic and hybrid retrieval over customer knowledge.</td></tr>
+<tr><td>Observability</td><td>Application Insights + Log Analytics</td><td>Tokens, cost, latency, errors, quality, traces and evaluations.</td></tr>
+<tr><td>Admin BI</td><td>Power BI or Microsoft Fabric</td><td>Pipeline, value, consumption, ROI and prompt governance.</td></tr>
+<tr><td>Secrets</td><td>Azure Key Vault</td><td>Keys, endpoints, secrets and sensitive configuration.</td></tr>
+</table>
+</div>
+</section>
+
+<section id="context" class="tab-content">
+<div class="card">
+<h2>5. Company Context Engine</h2>
+<p>The <strong>Company Context Engine</strong> is the component that allows the tool to be reusable across multiple customers. Its responsibility is to convert dispersed business information into operational context useful for agents.</p>
+<h3>5.1 Objectives</h3>
+<ul>
+<li>Personalize responses by industry, country, strategy, processes, technology stack and constraints.</li>
+<li>Reduce dependency on extensive forms.</li>
+<li>Maintain versioned, auditable and updateable context.</li>
+<li>Prevent agents from always using all available context; only relevant context should be sent by stage.</li>
+<li>Enable customer deployments with independent configuration.</li>
+</ul>
+</div>
+<div class="card">
+<h3>5.2 Context Capture Modes</h3>
+<table>
+<tr><th>Mode</th><th>Use</th><th>Description</th></tr>
+<tr><td>Quick Start</td><td>Demo or MVP</td><td>Only minimum data is requested: company, industry, country, units and main stack.</td></tr>
+<tr><td>Guided Setup</td><td>New customer</td><td>Short form + guided questions by a Discovery Agent.</td></tr>
+<tr><td>Enterprise Bootstrap</td><td>Enterprise customer</td><td>Upload documents, architectures, policies, OKRs, roadmaps and presentations.</td></tr>
+<tr><td>Progressive Enrichment</td><td>Continuous usage</td><td>Context is enriched as users interact and ideas are validated.</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>5.3 Subcomponents</h3>
+<table>
+<tr><th>Subcomponent</th><th>Responsibility</th></tr>
+<tr><td>Tenant Onboarding Service</td><td>Creates tenant, configuration, default language and deployment parameters.</td></tr>
+<tr><td>Discovery Agent</td><td>Interviews the customer to complete missing critical information.</td></tr>
+<tr><td>Document Ingestion Worker</td><td>Extracts content from PDF, Word, PPT, Markdown and other attachments.</td></tr>
+<tr><td>Context Normalizer</td><td>Converts content into structured entities: objectives, capabilities, systems and risks.</td></tr>
+<tr><td>Knowledge Indexer</td><td>Publishes documents and chunks into the Azure AI Search index.</td></tr>
+<tr><td>Context Retriever</td><td>Selects relevant context by role, stage, language and idea.</td></tr>
+<tr><td>Readiness Scorer</td><td>Calculates business, data, AI, security and cloud maturity.</td></tr>
+<tr><td>Context Governance</td><td>Versions, approves, retires or corrects context used by agents.</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>5.4 Suggested TenantProfile</h3>
+<pre>{
+  "tenant_id": "uuid",
+  "company_name": "",
+  "default_language": "es",
+  "supported_languages": ["es", "en", "pt"],
+  "industry": "",
+  "country": "",
+  "business_units": [],
+  "strategic_goals": [],
+  "business_capabilities": [],
+  "key_processes": [],
+  "technology_stack": [],
+  "data_platforms": [],
+  "security_constraints": [],
+  "compliance_requirements": [],
+  "ai_readiness": {
+    "business_maturity": 0,
+    "data_maturity": 0,
+    "cloud_maturity": 0,
+    "security_maturity": 0
+  },
+  "glossary": {
+    "preferred_terms": [],
+    "forbidden_terms": [],
+    "domain_acronyms": []
+  },
+  "context_versions": []
+}</pre>
+</div>
+</section>
+
+<section id="language" class="tab-content">
+<div class="card">
+<h2>6. Multilingual Support</h2>
+<p>The system must allow a user to describe ideas, technical questions or administrative decisions in different languages without breaking case state or traceability.</p>
+<h3>6.1 Multilingual Principles</h3>
+<ul>
+<li>Detect language per message and preserve the original language.</li>
+<li>Respond in the user’s language, unless the tenant or case indicates another preference.</li>
+<li>Keep structured fields normalized in a configurable internal canonical language, for example English or Spanish.</li>
+<li>Store both the original text and the normalized summary.</li>
+<li>Use multilingual embeddings or an index strategy that supports cross-language search.</li>
+<li>Maintain a tenant glossary for acronyms, system names, internal terms and preferred translations.</li>
+</ul>
+</div>
+<div class="card">
+<h3>6.2 Language Layer</h3>
+<table>
+<tr><th>Function</th><th>Description</th></tr>
+<tr><td>Language Detection</td><td>Detects message language and confidence.</td></tr>
+<tr><td>Locale Resolver</td><td>Defines response language considering user, tenant and case.</td></tr>
+<tr><td>Canonicalization</td><td>Normalizes summary, requirements and entities to a canonical language.</td></tr>
+<tr><td>Terminology Control</td><td>Applies the tenant glossary for consistency.</td></tr>
+<tr><td>Multilingual Retrieval</td><td>Retrieves context even when the document is in another language.</td></tr>
+<tr><td>Response Localization</td><td>Generates a natural response in the correct language.</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>6.3 Recommended Message Fields</h3>
+<pre>{
+  "message_id": "uuid",
+  "idea_id": "uuid",
+  "user_id": "uuid",
+  "role": "business_user | technical_user | admin",
+  "detected_language": "es",
+  "original_text": "",
+  "canonical_summary": "",
+  "response_language": "es",
+  "created_at": "datetime"
+}</pre>
+</div>
+</section>
+
+<section id="flow" class="tab-content">
+<div class="card">
+<h2>7. Updated End-to-End Flow</h2>
+<div class="flow">
+<div class="node">Tenant onboarding</div><div class="arrow">→</div>
+<div class="node">Context bootstrap</div><div class="arrow">→</div>
+<div class="node">Company Context Engine</div><div class="arrow">→</div>
+<div class="node">Business idea intake</div><div class="arrow">→</div>
+<div class="node">Business validation</div><div class="arrow">→</div>
+<div class="node">Technical validation</div><div class="arrow">→</div>
+<div class="node">Pilot / production tracking</div>
+</div>
+</div>
+<div class="card">
+<h3>Detailed Flow</h3>
+<ol>
+<li><strong>Tenant onboarding:</strong> the tenant is created and language, country, industry and basic parameters are configured.</li>
+<li><strong>Context bootstrap:</strong> the customer can complete a short form, talk to the Discovery Agent or upload documents.</li>
+<li><strong>Company Context Engine:</strong> normalizes documents, creates the TenantProfile, indexes knowledge and calculates maturity.</li>
+<li><strong>Business idea intake:</strong> the business user describes an idea in their own language.</li>
+<li><strong>Business validation:</strong> agents evaluate value, impact, risk, assumptions and open questions.</li>
+<li><strong>Gate 1:</strong> if the idea is viable, the business version is frozen and a Technical Brief is generated.</li>
+<li><strong>Technical validation:</strong> the technical user validates systems, data, integrations, security and feasibility.</li>
+<li><strong>Gate 2:</strong> if the idea is technically viable, an architecture and deployment package is generated.</li>
+<li><strong>Pilot / production tracking:</strong> the administrator measures progress, adoption, realized value, tokens and cost.</li>
+<li><strong>Context feedback loop:</strong> decisions and results feed the tenant context and improve future recommendations.</li>
+</ol>
+</div>
+</section>
+
+<section id="roles" class="tab-content">
+<div class="card">
+<h2>8. Separation of Role-Based Experiences</h2>
+<table>
+<tr><th>Role</th><th>Interaction</th><th>Visible Context</th><th>Can Edit</th><th>Expected Output</th></tr>
+<tr><td>Business User</td><td>Natural conversation to explain an idea.</td><td>Business context and open questions.</td><td>Business fields.</td><td>Business Case and viability.</td></tr>
+<tr><td>Technical User</td><td>Guided validation of the approved brief.</td><td>Technical Brief and relevant technical context.</td><td>Technical fields.</td><td>Feasibility and candidate architecture.</td></tr>
+<tr><td>Administrator</td><td>Dashboard and governance.</td><td>All cases, traces and metrics.</td><td>Statuses, prompts and configuration.</td><td>Pipeline, ROI, FinOps and auditability.</td></tr>
+</table>
+</div>
+</section>
+
+<section id="agents" class="tab-content">
+<div class="card">
+<h2>9. Proposed Agents</h2>
+<table>
+<tr><th>Agent</th><th>Responsibility</th><th>Main Output</th></tr>
+<tr><td>Discovery Agent</td><td>Build and update customer context.</td><td>Partial/complete TenantProfile.</td></tr>
+<tr><td>Business Intake Agent</td><td>Capture the idea, clarify the problem, users and value.</td><td>Structured idea summary.</td></tr>
+<tr><td>Business Viability Agent</td><td>Evaluate value, impact, risks and assumptions.</td><td>BusinessValidation JSON.</td></tr>
+<tr><td>Technical Validation Agent</td><td>Validate feasibility, systems, data and security.</td><td>TechnicalValidation JSON.</td></tr>
+<tr><td>Architecture Agent</td><td>Create target architecture and components.</td><td>ArchitecturePackage.</td></tr>
+<tr><td>Deployment Plan Agent</td><td>Generate roadmap, backlog and deployment steps.</td><td>DeploymentPlan.</td></tr>
+<tr><td>Evaluator / Critic Agent</td><td>Review bias, quality, context and consistency.</td><td>EvaluationReport.</td></tr>
+<tr><td>Response Composer</td><td>Convert structured outputs into natural conversation.</td><td>Final localized response.</td></tr>
+</table>
+</div>
+</section>
+
+<section id="data" class="tab-content">
+<div class="card">
+<h2>10. Extended Data Model</h2>
+<p>In addition to <code>IdeaCase</code>, the architecture must incorporate entities for tenant, context, documents, multilingual messages, agent executions and prompt governance.</p>
+<pre>{
+  "IdeaCase": {
+    "idea_id": "uuid",
+    "tenant_id": "uuid",
+    "title": "",
+    "current_stage": "business_validation",
+    "status": "draft | needs_clarification | business_viable | technical_validation | architecture_ready | pilot | production | rejected",
+    "source_language": "es",
+    "business_context": {},
+    "business_validation": {},
+    "technical_brief": {},
+    "technical_validation": {},
+    "architecture_package": {},
+    "value_tracking": {},
+    "audit": {
+      "decisions": [],
+      "prompt_versions": [],
+      "agent_runs": []
+    }
+  },
+  "TenantContextDocument": {
+    "document_id": "uuid",
+    "tenant_id": "uuid",
+    "source_uri": "blob-url",
+    "language": "es",
+    "document_type": "strategy | architecture | policy | roadmap | other",
+    "status": "indexed | needs_review | retired",
+    "version": "1.0"
+  },
+  "AgentRunTelemetry": {
+    "agent_run_id": "uuid",
+    "tenant_id": "uuid",
+    "idea_id": "uuid",
+    "agent_name": "Business Viability Agent",
+    "prompt_version": "business_viability_v3",
+    "model": "gpt-4o",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "estimated_cost": 0,
+    "latency_ms": 0,
+    "quality_score": 0
+  }
+}</pre>
+</div>
+</section>
+
+<section id="admin" class="tab-content">
+<div class="card">
+<h2>11. Admin Center: Value, Traceability and FinOps</h2>
+<p>The administrative section must demonstrate platform value and control its consumption.</p>
+<table>
+<tr><th>Tab</th><th>Suggested KPIs</th></tr>
+<tr><td>Idea Pipeline</td><td>Ideas by stage, area, industry, average time per gate, blockers.</td></tr>
+<tr><td>Generated Value</td><td>Estimated savings, actual savings, reduced hours, incremental revenue, ROI.</td></tr>
+<tr><td>AI FinOps</td><td>Tokens by tenant, agent, model, user, stage and use case.</td></tr>
+<tr><td>Prompt Governance</td><td>Active versions, average cost, quality, approver, change date.</td></tr>
+<tr><td>Audit</td><td>Decisions, owners, evidence, state changes, evaluations.</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>11.1 Implementation Review (Current Repository)</h3>
+<p>This matrix contrasts the blueprint against what is already available in the application and what remains pending.</p>
+<table>
+<tr><th>Component</th><th>Status</th><th>Current Evidence</th><th>Pending Work</th></tr>
+<tr><td>Frontend experience (Business/Technical/Admin)</td><td><span class="tag">Implemented</span></td><td>React + Vite app with role-based views and admin tabs.</td><td>UX refinements and deeper workflow guidance.</td></tr>
+<tr><td>API orchestration and case lifecycle</td><td><span class="tag">Implemented</span></td><td>FastAPI endpoints for intake, clarification, technical validation and admin dashboard.</td><td>Expand automated evaluation quality and coverage tests.</td></tr>
+<tr><td>Company Context Engine (base)</td><td><span class="tag">Implemented</span></td><td>Tenant context CRUD and contextual evaluation hooks are active.</td><td>Advanced discovery interview and richer context enrichment loops.</td></tr>
+<tr><td>Document ingestion to Blob</td><td><span class="tag">Implemented</span></td><td>Context file upload endpoint and Azure Blob/local fallback logic exist.</td><td>Production hardening for large-file processing pipeline.</td></tr>
+<tr><td>Multilingual behavior</td><td><span class="tag">Implemented</span></td><td>UI and decision messages support ES/EN/PT with language-aware responses.</td><td>Glossary-driven terminology normalization by tenant.</td></tr>
+<tr><td>Admin KPIs (pipeline/cost/metrics)</td><td><span class="tag">Implemented</span></td><td>Admin dashboard exposes approved use cases, token cost and portfolio metrics.</td><td>Add realized-value connectors and richer ROI history.</td></tr>
+<tr><td>State Store (cloud-grade)</td><td><span class="tag" style="background:#fff7ed;color:#9a3412">In progress</span></td><td>Current runtime uses SQLite in API container lifecycle.</td><td>Move to Azure PostgreSQL (or Cosmos DB) for persistent managed storage.</td></tr>
+<tr><td>Azure AI Search semantic retrieval</td><td><span class="tag" style="background:#fff7ed;color:#9a3412">Pending</span></td><td>No active semantic/hybrid retrieval service connected yet.</td><td>Implement indexing + retrieval services and tenant scoped queries.</td></tr>
+<tr><td>Foundry Agent Service managed runtime</td><td><span class="tag" style="background:#fff7ed;color:#9a3412">Pending</span></td><td>Agent-like logic is embedded in API orchestration.</td><td>Externalize specialized agents into Foundry runtime with versioned instructions.</td></tr>
+<tr><td>Observability and governance services</td><td><span class="tag" style="background:#fff7ed;color:#9a3412">Pending</span></td><td>Basic operational visibility exists via platform logs.</td><td>Integrate Application Insights, prompt governance telemetry and quality scorecards.</td></tr>
+<tr><td>Secrets and configuration governance</td><td><span class="tag" style="background:#fff7ed;color:#9a3412">Pending</span></td><td>Environment-based configuration is present.</td><td>Centralize secrets with Azure Key Vault and managed identity policies.</td></tr>
+</table>
+</div>
+</section>
+
+<section id="admin-components" class="tab-content">
+<div class="card component-diagram-shell">
+<h2>11.2 Admin Component Diagram</h2>
+<p class="component-subtitle">Component view of the current application and near-term target architecture.</p>
+<div class="component-map">
+  <svg class="connector-layer" viewBox="0 0 1200 620" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M210 120 C340 120, 360 120, 500 120" stroke="#7fcfff" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <path d="M210 236 C340 236, 360 236, 500 236" stroke="#99e5c9" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <path d="M700 120 C840 120, 860 118, 1020 130" stroke="#bba4ff" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <path d="M700 236 C840 240, 860 240, 1020 255" stroke="#7fcfff" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <path d="M700 352 C840 356, 860 360, 1020 382" stroke="#8ed6bf" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <path d="M600 430 C600 495, 600 510, 600 560" stroke="#e6a7ff" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+  </svg>
+
+  <div class="lane">
+    <div class="lane-title">Experience Layer</div>
+    <div class="comp-node accent-cyan">
+      <h4>Web App</h4>
+      <p>React + Vite interface for analyst, technical and admin users.</p>
+      <span class="pill">Implemented</span>
+    </div>
+    <div class="comp-node">
+      <h4>Role Sessions</h4>
+      <p>Business and admin experiences with contextual actions by stage.</p>
+      <span class="pill">Implemented</span>
+    </div>
+  </div>
+
+  <div class="lane component-center-stack">
+    <div class="lane-title">Core Runtime</div>
+    <div class="comp-node accent-violet">
+      <h4>Agentic Workflow API</h4>
+      <p>FastAPI orchestration for intake, clarification, technical validation and admin metrics.</p>
+      <span class="pill">Implemented</span>
+    </div>
+    <div class="comp-node accent-green">
+      <h4>Company Context Engine</h4>
+      <p>Tenant context profile, contextual scoring and business decision guidance.</p>
+      <span class="pill">Implemented</span>
+    </div>
+    <div class="comp-node accent-violet">
+      <h4>Admin Services</h4>
+      <p>Portfolio metrics, token/cost controls and deployment status management.</p>
+      <span class="pill">Implemented</span>
+    </div>
+  </div>
+
+  <div class="lane">
+    <div class="lane-title">Data + Platform</div>
+    <div class="comp-node accent-orange">
+      <h4>Blob Storage</h4>
+      <p>Document uploads for context evidence and artifact persistence.</p>
+      <span class="pill">Implemented</span>
+    </div>
+    <div class="comp-node accent-orange">
+      <h4>Managed Database</h4>
+      <p>Target persistent store for production-grade state and sessions.</p>
+      <span class="pill">Pending (target: Azure PostgreSQL)</span>
+    </div>
+    <div class="comp-node">
+      <h4>Semantic Retrieval</h4>
+      <p>Azure AI Search index for contextual hybrid retrieval by tenant.</p>
+      <span class="pill">Pending</span>
+    </div>
+    <div class="comp-node">
+      <h4>Observability + Governance</h4>
+      <p>Application Insights, prompt/version governance and quality telemetry.</p>
+      <span class="pill">Pending</span>
+    </div>
+  </div>
+  </div>
+  <div class="component-legend">
+    <span class="legend-chip"><span class="dot cyan"></span>Experience</span>
+    <span class="legend-chip"><span class="dot violet"></span>Orchestration</span>
+    <span class="legend-chip"><span class="dot green"></span>Context intelligence</span>
+    <span class="legend-chip"><span class="dot orange"></span>Data and platform</span>
+  </div>
+</div>
+</section>
+
+<section id="deployment" class="tab-content">
+<div class="card">
+<h2>12. Packaged Deployment per Customer</h2>
+<p>To allow each customer to deploy the solution in its own Azure environment, infrastructure as code and tenant-based configuration are recommended.</p>
+<h3>Suggested Azure Resources</h3>
+<ul>
+<li>Azure Container Apps Environment.</li>
+<li>Container App for React/Vite frontend.</li>
+<li>Container App for Python/FastAPI API.</li>
+<li>Container App Job or Worker for document ingestion and processing.</li>
+<li>Azure Container Registry.</li>
+<li>Azure OpenAI or models deployed from Foundry.</li>
+<li>Foundry Agent Service.</li>
+<li>Azure AI Search.</li>
+<li>Azure Blob Storage.</li>
+<li>Cosmos DB or Azure Database for PostgreSQL.</li>
+<li>Azure Key Vault.</li>
+<li>Application Insights and Log Analytics.</li>
+<li>Managed Identity for secure access between services.</li>
+</ul>
+</div>
+<div class="card">
+<h3>Deployment Parameters</h3>
+<pre>{
+  "tenant_name": "contoso",
+  "region": "eastus",
+  "default_language": "es",
+  "supported_languages": ["es", "en", "pt"],
+  "database_engine": "postgresql",
+  "vector_index_name": "contoso-context-index",
+  "container_image_tag": "v1.0.0",
+  "enable_admin_dashboard": true,
+  "enable_document_ingestion": true
+}</pre>
+</div>
+</section>
+
+<section id="copilot" class="tab-content">
+<div class="card">
+<h2>13. Recommendations for GitHub Copilot</h2>
+<p>Use this document as a technical backlog and ask GitHub Copilot to implement it by modules:</p>
+<ol>
+<li>Create the base monorepo structure: <code>/frontend</code>, <code>/api</code>, <code>/workers</code>, <code>/infra</code>, <code>/docs</code>.</li>
+<li>Implement Pydantic models: TenantProfile, IdeaCase, AgentRunTelemetry, PromptVersion.</li>
+<li>Create FastAPI endpoints for tenant onboarding, idea intake, business submit, technical validation and admin metrics.</li>
+<li>Implement the Language Layer with language detection, locale resolver and <code>original_text</code> + <code>canonical_summary</code> fields.</li>
+<li>Implement the Company Context Engine with ingestion, normalization, indexing and retrieval services.</li>
+<li>Create a client for Foundry Agents and wrappers for each specialized agent.</li>
+<li>Implement Telemetry Middleware to capture tokens, latency, estimated cost, model and prompt version.</li>
+<li>Create React/Vite UI with three experiences: Business, Technical and Admin.</li>
+<li>Create IaC to deploy resources on Azure Container Apps with Managed Identity and Key Vault.</li>
+</ol>
+</div>
+</section>
+
+<section id="roadmap" class="tab-content">
+<div class="card">
+<h2>14. Recommended Roadmap</h2>
+<table>
+<tr><th>Phase</th><th>Scope</th><th>Outcome</th></tr>
+<tr><td>MVP 1</td><td>Idea intake, business validation, case state, simple UI.</td><td>Basic capture and validation.</td></tr>
+<tr><td>MVP 2</td><td>Technical validation, architecture package, response composer.</td><td>Complete business-to-technical flow.</td></tr>
+<tr><td>MVP 3</td><td>Company Context Engine with quick setup and documents.</td><td>Customer personalization.</td></tr>
+<tr><td>MVP 4</td><td>Admin center with tokens, cost, ROI and prompts.</td><td>Governance and FinOps.</td></tr>
+<tr><td>MVP 5</td><td>Multi-tenant IaC and packaged deployment.</td><td>Reusable product by customer.</td></tr>
+</table>
+</div>
+<div class="card">
+<h2>15. Key Architectural Decision</h2>
+<p>The biggest differentiator is not simply using agents. The differentiator is combining agents with a <strong>Company Context Engine</strong>, a <strong>Language Layer</strong>, a <strong>versioned case state</strong> and an <strong>Admin Center for value and FinOps</strong>. This enables the solution to scale from a proof of concept into a packaged, governable enterprise platform adaptable to each customer.</p>
+</div>
+</section>
+
+<div class="footer">AI Use Case Factory with Company Context Engine — English Executive HTML Blueprint</div>
+</div>
+<script>
+function openTab(evt, tabName){
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  evt.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>

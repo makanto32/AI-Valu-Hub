@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Value Hub - Interactive Walkthrough</title>
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #111a2b;
+  --panel-2: #16233a;
+  --line: #2a3a59;
+  --text: #e8eefb;
+  --muted: #9fb0cf;
+  --blue: #4e8cff;
+  --green: #27c59a;
+  --amber: #efb24b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(1200px 700px at 20% -10%, #1a2b4a, transparent), var(--bg);
+  color: var(--text);
+  font-family: Segoe UI, Arial, sans-serif;
+}
+.shell {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.topbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 14, 26, 0.95);
+}
+.brand {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.brand span { color: var(--blue); }
+.lang-selector {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+.lang-btn {
+  border: 1px solid var(--line);
+  background: #1a2944;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.lang-btn:hover {
+  border-color: #4e8cff;
+}
+.lang-btn.active {
+  background: linear-gradient(90deg, #3b6ff0, #7a5ce0);
+  border-color: transparent;
+  color: #fff;
+}
+.chapters {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+}
+.chap {
+  height: 6px;
+  border-radius: 999px;
+  background: #2b3a57;
+  flex: 1;
+  cursor: pointer;
+}
+.chap.active { background: var(--blue); }
+.chap.done { background: var(--green); }
+.timer {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.main {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr var(--side-width, 360px);
+}
+.shell.focus-live .main {
+  grid-template-columns: 1fr;
+}
+.stage {
+  min-height: 0;
+  border-right: 1px solid var(--line);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  position: relative;
+}
+.shell.focus-live .stage {
+  border-right: 0;
+}
+.stage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(17, 26, 43, 0.8);
+  border-bottom: 1px solid var(--line);
+}
+.stage-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.live-controls {
+  display: flex;
+  gap: 8px;
+}
+.btn {
+  border: 1px solid var(--line);
+  background: #1a2944;
+  color: var(--text);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn:hover { border-color: #4e8cff; }
+.btn.primary {
+  background: linear-gradient(90deg, #3b6ff0, #7a5ce0);
+  border-color: transparent;
+}
+.frame-wrap {
+  min-height: 0;
+  background: #0a1020;
+  overflow: auto;
+}
+iframe {
+  width: calc(100% / var(--frame-scale, 1));
+  height: calc(100% / var(--frame-scale, 1));
+  border: 0;
+  background: #ffffff;
+  display: block;
+  transform: scale(var(--frame-scale, 1));
+  transform-origin: top left;
+}
+.side {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  background: rgba(10, 16, 31, 0.95);
+}
+.shell.focus-live .side {
+  display: none;
+}
+.side-head {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.side-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.side-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.value-box {
+  margin: 12px 14px 0;
+  border: 1px solid #2e4468;
+  border-radius: 10px;
+  background: #13213a;
+  padding: 10px;
+  font-size: 12px;
+}
+.value-box h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #b6d0ff;
+}
+.value-list {
+  margin: 0;
+  padding-left: 16px;
+  color: #d9e5fb;
+  line-height: 1.5;
+}
+.value-list li {
+  position: relative;
+  cursor: help;
+  transition: color 0.2s ease;
+}
+.value-list li:hover {
+  color: var(--green);
+}
+.tooltip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 12px;
+  background: #1a3a5a;
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: #d9e5fb;
+  white-space: normal;
+  width: 220px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 8px 24px rgba(5, 8, 16, 0.6);
+  line-height: 1.4;
+}
+.value-list li:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+.narr {
+  min-height: 0;
+  overflow: auto;
+  padding: 14px;
+  color: #dbe5f9;
+  line-height: 1.6;
+  font-size: 13px;
+}
+.narr p { margin: 0 0 10px; }
+.narr .tip {
+  background: rgba(39, 197, 154, 0.12);
+  border-left: 3px solid var(--green);
+  padding: 8px 10px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0;
+}
+.narr .warn {
+  background: rgba(239, 178, 75, 0.1);
+  border-left: 3px solid var(--amber);
+  padding: 8px 10px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0;
+}
+.bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  background: rgba(8, 14, 26, 0.95);
+}
+.counter {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+}
+.fit-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.fit-select {
+  border: 1px solid var(--line);
+  background: #1a2944;
+  color: var(--text);
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.session-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 11, 20, 0.74);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+.session-transition.show {
+  display: flex;
+  animation: transitionFade 1.9s ease forwards;
+}
+.session-transition-card {
+  min-width: 320px;
+  max-width: 560px;
+  border: 1px solid #3a5687;
+  background: linear-gradient(160deg, rgba(17, 32, 58, 0.95), rgba(24, 44, 77, 0.9));
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 24px 50px rgba(5, 8, 16, 0.45);
+}
+.session-transition-kicker {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9ec0ff;
+  margin-bottom: 8px;
+}
+.session-transition-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.session-transition-sub {
+  color: #cfe0ff;
+  font-size: 13px;
+}
+@keyframes transitionFade {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (max-width: 1100px) {
+  .main { grid-template-columns: 1fr; }
+  .side { border-top: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><span>AI</span> Value Hub - Interactive Walkthrough</div>
+    <div class="chapters" id="chapters"></div>
+    <div class="lang-selector">
+      <button class="lang-btn active" data-lang="en" id="langEN">English</button>
+      <button class="lang-btn" data-lang="es" id="langES">Español</button>
+      <button class="lang-btn" data-lang="pt" id="langPT">Português</button>
+    </div>
+    <div class="timer" id="timer">Play to start</div>
+  </div>
+
+  <div class="main">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title" id="sceneTitle">Loading...</div>
+        <div class="live-controls">
+          <button class="btn" id="btnOpenApp">Open Live App</button>
+          <button class="btn" id="btnReloadApp">Reload App</button>
+          <button class="btn" id="btnSyncStep">Sync Step</button>
+          <button class="btn" id="btnFocusLive">Focus Live</button>
+        </div>
+      </div>
+      <div class="frame-wrap">
+        <iframe id="appFrame" src="http://127.0.0.1:5174"></iframe>
+      </div>
+      <div class="session-transition" id="sessionTransition" aria-live="polite">
+        <div class="session-transition-card">
+          <div class="session-transition-kicker">Live session handoff</div>
+          <div class="session-transition-title" id="sessionTransitionTitle">Switching session</div>
+          <div class="session-transition-sub" id="sessionTransitionSub">Applying credentials and loading the next workspace view.</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="side-head">
+        <h2 id="sideHeading">Live UI Demo</h2>
+        <p>This walkthrough uses the real application interface, not a mockup.</p>
+      </div>
+      <div class="value-box" id="valueBox"></div>
+      <div class="narr" id="narration"></div>
+    </aside>
+  </div>
+
+  <div class="bottom">
+    <button class="btn" id="btnPrev">Previous</button>
+    <button class="btn primary" id="btnPlay">Pause</button>
+    <button class="btn" id="btnNext">Next</button>
+    <button class="btn" id="btnRestart">Restart</button>
+    <button class="btn" id="btnAudio">Audio off</button>
+    <label class="fit-label" for="fitScale">Fit</label>
+    <select class="fit-select" id="fitScale" aria-label="Fit scale">
+      <option value="1">100%</option>
+      <option value="0.95">95%</option>
+      <option value="0.9">90%</option>
+      <option value="0.85" selected>85%</option>
+      <option value="0.8">80%</option>
+    </select>
+    <div class="counter" id="counter">Step 1 / 8</div>
+  </div>
+</div>
+
+<script>
+const LIVE_URL = "http://127.0.0.1:5174";
+
+const LANG_TEXTS = {
+  en: {
+    playToStart: "Play to start",
+    pause: "Pause",
+    play: "Play",
+    previous: "Previous",
+    next: "Next",
+    restart: "Restart",
+    audioOn: "Audio on",
+    audioOff: "Audio off",
+    openApp: "Open Live App",
+    reloadApp: "Reload App",
+    syncStep: "Sync Step",
+    focusLive: "Focus Live",
+    showGuide: "Show Guide",
+    fit: "Fit",
+    counter: (current, total) => `Step ${current} / ${total}`,
+    liveNote: (url) => `Live UI note: this walkthrough is connected to the actual app at ${url}.`,
+    metricDescriptions: {
+      "Rework Reduction: 70.2%": "Percentage of duplicate or redundant work eliminated by AI-assisted deduplication and automated quality checks on captured ideas.",
+      "Duplicates Avoided: 59.5%": "Rate of potential duplicate submissions identified and consolidated before reaching the evaluation phase, saving analyst review time.",
+      "AI Adoption Rate: 21.4%": "Percentage of users actively utilizing AI-assisted features for idea validation, qualification, and architecture generation.",
+      "Total Ideas: 42": "Cumulative count of all ideas captured in the current operational period, spanning all business units.",
+      "Avoided Cost: $50K": "Estimated financial impact from preventing rework, reducing analyst overhead, and accelerating time-to-implementation.",
+      "ROI: 385%": "Return on investment calculated from avoided costs and operational efficiency gains against platform implementation and maintenance costs."
+    }
+  },
+  es: {
+    playToStart: "Presiona play para comenzar",
+    pause: "Pausa",
+    play: "Reproducir",
+    previous: "Anterior",
+    next: "Siguiente",
+    restart: "Reiniciar",
+    audioOn: "Audio activado",
+    audioOff: "Audio desactivado",
+    openApp: "Abrir aplicación",
+    reloadApp: "Recargar app",
+    syncStep: "Sincronizar paso",
+    focusLive: "Expandir vista",
+    showGuide: "Ver guía",
+    fit: "Ajuste",
+    counter: (current, total) => `Paso ${current} / ${total}`,
+    liveNote: (url) => `Nota en vivo: esta demostración está conectada a la aplicación real en ${url}.`,
+    metricDescriptions: {
+      "Rework Reduction: 70.2%": "Porcentaje de trabajo duplicado o redundante eliminado mediante deduplicación asistida por IA y controles de calidad automatizados en ideas capturadas.",
+      "Duplicates Avoided: 59.5%": "Tasa de envíos potencialmente duplicados identificados y consolidados antes de llegar a la fase de evaluación, ahorrando tiempo de revisión del analista.",
+      "AI Adoption Rate: 21.4%": "Porcentaje de usuarios que utilizan activamente características asistidas por IA para validación de ideas, calificación y generación de arquitectura.",
+      "Total Ideas: 42": "Recuento acumulado de todas las ideas capturadas en el período operativo actual, abarcando todas las unidades de negocio.",
+      "Avoided Cost: $50K": "Impacto financiero estimado por prevenir rework, reducir sobrecarga de analistas y acelerar tiempo de implementación.",
+      "ROI: 385%": "Retorno de inversión calculado a partir de costos evitados y ganancias de eficiencia operativa contra costos de implementación y mantenimiento de la plataforma."
+    }
+  },
+  pt: {
+    playToStart: "Pressione play para começar",
+    pause: "Pausa",
+    play: "Reproduzir",
+    previous: "Anterior",
+    next: "Próximo",
+    restart: "Reiniciar",
+    audioOn: "Áudio ligado",
+    audioOff: "Áudio desligado",
+    openApp: "Abrir aplicativo",
+    reloadApp: "Recarregar app",
+    syncStep: "Sincronizar etapa",
+    focusLive: "Expandir visualização",
+    showGuide: "Ver guia",
+    fit: "Ajuste",
+    counter: (current, total) => `Etapa ${current} / ${total}`,
+    liveNote: (url) => `Nota ao vivo: este passo a passo está conectado ao aplicativo real em ${url}.`,
+    metricDescriptions: {
+      "Rework Reduction: 70.2%": "Percentual de trabalho duplicado ou redundante eliminado por deduplicação assistida por IA e verificações de qualidade automatizadas em ideias capturadas.",
+      "Duplicates Avoided: 59.5%": "Taxa de envios potencialmente duplicados identificados e consolidados antes de chegar à fase de avaliação, economizando tempo de revisão do analista.",
+      "AI Adoption Rate: 21.4%": "Percentual de usuários utilizando ativamente recursos assistidos por IA para validação de ideias, qualificação e geração de arquitetura.",
+      "Total Ideas: 42": "Contagem cumulativa de todas as ideias capturadas no período operacional atual, abrangendo todas as unidades de negócio.",
+      "Avoided Cost: $50K": "Impacto financeiro estimado de evitar retrabalho, reduzir sobrecarga de analistas e acelerar tempo de implementação.",
+      "ROI: 385%": "Retorno sobre investimento calculado a partir de custos evitados e ganhos de eficiência operacional em relação aos custos de implementação e manutenção da plataforma."
+    }
+  }
+};
+
+const STEPS = [
+  {
+    title: { en: "User session - Login & Welcome", es: "Sesión de usuario - Acceso", pt: "Sessão do usuário - Acesso" },
+    duration: 24,
+    heading: { en: "Start in the real interface", es: "Comenzar en la interfaz real", pt: "Começar na interface real" },
+    valueTitle: { en: "What you'll see", es: "Lo que verás", pt: "O que você verá" },
+    valueItems: {
+      en: ["Real product interface", "User login workflow", "Language and timezone settings", "Entry point for all idea capture"],
+      es: ["Interfaz real del producto", "Flujo de acceso del usuario", "Configuración de idioma y zona horaria", "Punto de entrada para capturar ideas"],
+      pt: ["Interface real do produto", "Fluxo de login do usuário", "Configurações de idioma e fuso horário", "Ponto de entrada para capturar ideias"]
+    },
+    text: {
+      en: ["We're looking at the live application in real time. This is the exact interface your teams will use every day.", "First, we sign in with a regular user account to show that AI Value Hub is built on real authentication, real data, and real workflow logic.", "This foundation matters because everything after this—data governance, audit trails, team alignment—depends on having reliable capture from the very first moment a user engages."],
+      es: ["Estamos viendo la aplicación en tiempo real. Esta es la interfaz exacta que tus equipos usarán todos los días.", "Primero, accedemos con una cuenta de usuario regular para mostrar que AI Value Hub está construido sobre autenticación real, datos reales y lógica de flujo real.", "Esta base es importante porque todo lo que viene después —gobernanza de datos, trazas de auditoría, alineación de equipos— depende de tener captura confiable desde el primer momento en que un usuario se conecta."],
+      pt: ["Estamos olhando para o aplicativo ao vivo em tempo real. Esta é a interface exata que seus times usarão todos os dias.", "Primeiro, fazemos login com uma conta de usuário regular para mostrar que AI Value Hub é construído em autenticação real, dados reais e lógica de fluxo real.", "Essa base é importante porque tudo o que vem depois — governança de dados, trilhas de auditoria, alinhamento de equipes — depende de ter captura confiável desde o primeiro momento em que um usuário se conecta."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      showLoginScreen: true,
+      view: "main",
+      demoActions: [
+        { type: "logout" },
+        { type: "login", username: "analista.finanzas", password: "Demo1234!" }
+      ]
+    },
+    audio: {
+      en: "Welcome. Today we're going to walk through how AI Value Hub transforms scattered ideas into operational decisions—end to end. We're starting in the real interface, not a mockup. Right now, we're signing in as a regular user, which is where the journey begins. Every idea captured here will flow through intelligence, validation, and governance to become actionable for your leadership team.",
+      es: "Bienvenida. Hoy vamos a ver cómo AI Value Hub transforma ideas dispersas en decisiones operacionales, de principio a fin. Comenzamos en la interfaz real, no en una maqueta. Ahora mismo, nos conectamos como un usuario regular, que es donde comienza el viaje. Cada idea capturada aquí fluirá a través de inteligencia, validación y gobernanza para convertirse en accionable para tu equipo de liderazgo.",
+      pt: "Bem-vindo. Hoje vamos demonstrar como o AI Value Hub transforma ideias dispersas em decisões operacionais—de ponta a ponta. Estamos começando na interface real, não em um protótipo. Agora mesmo, estamos fazendo login como um usuário regular, que é onde a jornada começa. Cada ideia capturada aqui fluirá através de inteligência, validação e governança para se tornar acionável para sua equipe de liderança."
+    }
+  },
+  {
+    title: { en: "User session - Idea intake form", es: "Sesión de usuario - Formulario de captura", pt: "Sessão do usuário - Formulário de captura" },
+    duration: 20,
+    heading: { en: "Quality capture from the first step", es: "Captura de calidad desde el primer paso", pt: "Captura de qualidade desde o primeiro passo" },
+    valueTitle: { en: "Structured intake", es: "Captura estructurada", pt: "Captura estruturada" },
+    valueItems: {
+      en: ["Business problem + expected value", "Affected users and scope", "Organizational alignment details", "Language preserved for governance"],
+      es: ["Problema empresarial + valor esperado", "Usuarios afectados y alcance", "Detalles de alineación organizacional", "Idioma preservado para gobernanza"],
+      pt: ["Problema comercial + valor esperado", "Usuários afetados e escopo", "Detalhes de alinhamento organizacional", "Idioma preservado para governança"]
+    },
+    text: {
+      en: ["Notice the intake form. Every field is designed to capture business context, not just a vague request.", "Problem statement, expected business value, affected users, strategic alignment—this structure ensures that ideas become comparable and auditable from day one.", "Without this rigor at capture, you end up chasing clarifications later. AI Value Hub puts the discipline upfront."],
+      es: ["Observa el formulario de captura. Cada campo está diseñado para capturar contexto empresarial, no solo una solicitud vaga.", "Declaración del problema, valor empresarial esperado, usuarios afectados, alineación estratégica—esta estructura garantiza que las ideas sean comparables y auditables desde el primer día.", "Sin este rigor en la captura, terminas persiguiendo aclaraciones más tarde. AI Value Hub pone la disciplina al frente."],
+      pt: ["Observe o formulário de captura. Cada campo é projetado para capturar contexto comercial, não apenas um pedido vago.", "Declaração do problema, valor comercial esperado, usuários afetados, alinhamento estratégico—essa estrutura garante que as ideias sejam comparáveis e auditáveis desde o primeiro dia.", "Sem esse rigor na captura, você termina buscando esclarecimentos depois. AI Value Hub coloca a disciplina primeiro."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "main"
+    },
+    audio: {
+      en: "Here's the idea intake form. What makes this different is structure. Users aren't just typing a random request—they're providing a business problem, expected value, and scope. This turns ideas into decision-grade information before they even reach evaluation.",
+      es: "Aquí está el formulario de captura de ideas. Lo que lo hace diferente es la estructura. Los usuarios no están escribiendo una solicitud aleatoria—están proporcionando un problema empresarial, valor esperado y alcance. Esto convierte las ideas en información de grado decisional antes de que lleguen a la evaluación.",
+      pt: "Aqui está o formulário de captura de ideias. O que o torna diferente é a estrutura. Os usuários não estão apenas digitando um pedido aleatório—estão fornecendo um problema comercial, valor esperado e escopo. Isso transforma ideias em informações de qualidade decisória antes mesmo de chegarem à avaliação."
+    }
+  },
+  {
+    title: { en: "User session - Validation & AI assistance", es: "Sesión de usuario - Validación e IA", pt: "Sessão do usuário - Validação e IA" },
+    duration: 26,
+    heading: { en: "Intelligent qualification in action", es: "Calificación inteligente en acción", pt: "Qualificação inteligente em ação" },
+    valueTitle: { en: "What AI does", es: "Lo que hace la IA", pt: "O que a IA faz" },
+    valueItems: {
+      en: ["Identifies risk signals automatically", "Generates feasibility assessment", "Suggests architecture package for approved ideas", "Reduces analyst rework by 70%+"],
+      es: ["Identifica señales de riesgo automáticamente", "Genera evaluación de viabilidad", "Sugiere paquete de arquitectura para ideas aprobadas", "Reduce rework del analista en 70%+"],
+      pt: ["Identifica sinais de risco automaticamente", "Gera avaliação de viabilidade", "Sugere pacote de arquitetura para ideias aprovadas", "Reduz retrabalho do analista em 70%+"]
+    },
+    text: {
+      en: ["This is where AI saves your analysts time. The system scans the intake for completeness, feasibility signals, and alignment risks—then presents a summary and recommendation.", "If an idea reaches 'valid' status, the AI generates an entire architecture package: a deployment diagram, recommended Azure services stack, and a baseline implementation approach.", "This transforms analysis from 'is this idea good?' into 'here's exactly where we'd start building it'—dramatically compressing your time to execution."],
+      es: ["Aquí es donde la IA ahorra tiempo a tus analistas. El sistema escanea la captura por completitud, señales de viabilidad y riesgos de alineación—luego presenta un resumen y recomendación.", "Si una idea alcanza el estado 'válida', la IA genera un paquete de arquitectura completo: un diagrama de despliegue, pila de servicios Azure recomendada y enfoque de implementación base.", "Esto transforma el análisis de '¿es buena esta idea?' en 'aquí es exactamente donde comenzaríamos a construirla'—comprimiendo drásticamente tu tiempo hasta la ejecución."],
+      pt: ["É aqui que a IA economiza tempo de seus analistas. O sistema verifica a captura por completude, sinais de viabilidade e riscos de alinhamento—depois apresenta um resumo e recomendação.", "Se uma ideia atingir o status 'válida', a IA gera um pacote de arquitetura completo: um diagrama de implantação, stack de serviços Azure recomendado e abordagem de implementação básica.", "Isso transforma a análise de 'essa ideia é boa?' em 'aqui é exatamente onde começaríamos a construir'—comprimindo drasticamente seu tempo até a execução."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "main"
+    },
+    audio: {
+      en: "Step three is validation, and this is where AI multiplies your team's effectiveness. The system doesn't just check yes or no—it flags feasibility concerns, compatibility issues, and dependencies. When an idea is ready, it generates a full architecture package: technical reference, Azure services recommendations, and a development starting point. Your team can move from conversation to implementation much faster.",
+      es: "El paso tres es validación, y aquí es donde la IA multiplica la efectividad de tu equipo. El sistema no solo verifica sí o no—señala preocupaciones de viabilidad, problemas de compatibilidad y dependencias. Cuando una idea está lista, genera un paquete de arquitectura completo: referencia técnica, recomendaciones de servicios Azure y punto de inicio de desarrollo. Tu equipo puede pasar de la conversación a la implementación mucho más rápido.",
+      pt: "O passo três é validação, e é aqui que a IA multiplica a eficácia de sua equipe. O sistema não apenas verifica sim ou não—ele sinaliza preocupações de viabilidade, problemas de compatibilidade e dependências. Quando uma ideia está pronta, ela gera um pacote de arquitetura completo: referência técnica, recomendações de serviços Azure e ponto de partida para desenvolvimento. Sua equipe pode passar da conversa para a implementação muito mais rápido."
+    }
+  },
+  {
+    title: { en: "Admin session - Executive Dashboard", es: "Sesión de admin - Panel ejecutivo", pt: "Sessão de admin - Painel executivo" },
+    duration: 24,
+    heading: { en: "Leadership sees impact in real time", es: "El liderazgo ve el impacto en tiempo real", pt: "A liderança vê o impacto em tempo real" },
+    valueTitle: { en: "Dashboard metrics (live)", es: "Métricas del panel (en vivo)", pt: "Métricas do painel (ao vivo)" },
+    valueItems: {
+      en: ["Rework Reduction: 70.2%", "Duplicates Avoided: 59.5%", "AI Adoption Rate: 21.4%", "Total Ideas: 42", "Avoided Cost: $50K", "ROI: 385%"],
+      es: ["Reducción de rework: 70,2%", "Duplicados evitados: 59,5%", "Tasa de adopción IA: 21,4%", "Total de ideas: 42", "Costo evitado: $50K", "ROI: 385%"],
+      pt: ["Redução de retrabalho: 70,2%", "Duplicatas evitadas: 59,5%", "Taxa de adoção de IA: 21,4%", "Total de ideias: 42", "Custo evitado: $50K", "ROI: 385%"]
+    },
+    text: {
+      en: ["Now we switch to the admin view. Everything your users captured now becomes executive intelligence.", "The dashboard aggregates all those structured ideas into metrics that matter: duplication rate, approval velocity, cost avoidance, and ROI.", "These aren't vanity metrics—they're the evidence that your innovation process is working better."],
+      es: ["Ahora cambiamos a la vista de admin. Todo lo que capturaron tus usuarios ahora se convierte en inteligencia ejecutiva.", "El panel agrega todas esas ideas estructuradas en métricas que importan: tasa de duplicación, velocidad de aprobación, evasión de costos y ROI.", "Estas no son métricas de vanidad—son la evidencia de que tu proceso de innovación está funcionando mejor."],
+      pt: ["Agora mudamos para a visualização de admin. Tudo o que seus usuários capturaram agora se torna inteligência executiva.", "O painel agrega todas essas ideias estruturadas em métricas que importam: taxa de duplicação, velocidade de aprovação, evasão de custos e ROI.", "Estas não são métricas de vaidade—são a evidência de que seu processo de inovação está funcionando melhor."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "executiveDashboard",
+      demoActions: [
+        { type: "logout" },
+        { type: "login", username: "admin.valuehub", password: "Demo1234!" }
+      ]
+    },
+    audio: {
+      en: "Now the admin view. The dashboard translates all those ideas captured by users into metrics your leadership team actually cares about: how much duplicate work are we avoiding, how fast are we filtering good ideas, and what's the financial impact. These are not abstract metrics—they prove the system is creating operational momentum.",
+      es: "Ahora la vista de admin. El panel traduce todas esas ideas capturadas por usuarios en métricas que realmente le importan a tu equipo de liderazgo: cuánto trabajo duplicado estamos evitando, qué tan rápido estamos filtrando ideas buenas, y cuál es el impacto financiero. Estas no son métricas abstractas—prueban que el sistema está creando impulso operacional.",
+      pt: "Agora a visualização de admin. O painel traduz todas as ideias capturadas pelos usuários em métricas que realmente importam para sua equipe de liderança: quanto trabalho duplicado estamos evitando, qual a rapidez com que estamos filtrando ideias boas e qual é o impacto financeiro. Estas não são métricas abstratas—elas provam que o sistema está criando impulso operacional."
+    }
+  },
+  {
+    title: { en: "Admin session - Use Cases tab", es: "Sesión de admin - Pestaña de casos de uso", pt: "Sessão de admin - Aba de casos de uso" },
+    duration: 22,
+    heading: { en: "Portfolio governance at a glance", es: "Gobernanza de cartera de un vistazo", pt: "Governança de portfólio em um relance" },
+    valueTitle: { en: "Use cases inventory", es: "Inventario de casos de uso", pt: "Inventário de casos de uso" },
+    valueItems: {
+      en: ["Approved ideas with ownership", "Feasibility and maturity scores", "Deployment status and next steps", "AI model selection and costs"],
+      es: ["Ideas aprobadas con propietario", "Puntuaciones de viabilidad y madurez", "Estado de implementación y próximos pasos", "Selección de modelo IA y costos"],
+      pt: ["Ideias aprovadas com proprietário", "Pontuações de viabilidade e maturidade", "Status de implantação e próximas etapas", "Seleção de modelo de IA e custos"]
+    },
+    text: {
+      en: ["This view is where your team coordinates execution. Each approved idea becomes a 'use case'—with owner, feasibility rating, current stage, and effort estimate.", "Leadership can see what's coming, which projects need attention, and what resources are allocated.", "This is operational governance made visible—no surprises, no misalignment."],
+      es: ["Esta vista es donde tu equipo coordina la ejecución. Cada idea aprobada se convierte en un 'caso de uso'—con propietario, calificación de viabilidad, fase actual y estimación de esfuerzo.", "El liderazgo puede ver qué está por venir, qué proyectos necesitan atención y qué recursos están asignados.", "Esta es la gobernanza operacional hecha visible—sin sorpresas, sin desalineación."],
+      pt: ["Esta visualização é onde sua equipe coordena a execução. Cada ideia aprovada se torna um 'caso de uso'—com proprietário, classificação de viabilidade, estágio atual e estimativa de esforço.", "A liderança pode ver o que vem, quais projetos precisam de atenção e quais recursos estão alocados.", "Esta é governança operacional feita visível—sem surpresas, sem desalinhamento."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "admin",
+      adminTab: "useCases"
+    },
+    audio: {
+      en: "Use cases is your roadmap. Every approved idea has an owner, a maturity level, and a status. You can see which projects are in exploration, which are ready for development, and which are live. This is how governance moves from paperwork to decision-grade operations.",
+      es: "Casos de uso es tu hoja de ruta. Cada idea aprobada tiene un propietario, un nivel de madurez y un estado. Puedes ver qué proyectos están en exploración, cuáles están listos para desarrollo y cuáles están en vivo. Así es como la gobernanza se mueve de trámites a operaciones de grado decisional.",
+      pt: "Casos de uso é seu mapa de rota. Cada ideia aprovada tem um proprietário, um nível de maturidade e um status. Você pode ver quais projetos estão em exploração, quais estão prontos para desenvolvimento e quais estão ativos. É assim que a governança passa de burocracia para operações de qualidade decisória."
+    }
+  },
+  {
+    title: { en: "Admin session - Tokens & Cost tab", es: "Sesión de admin - Pestaña de tokens y costo", pt: "Sessão de admin - Aba de tokens e custo" },
+    duration: 24,
+    heading: { en: "FinOps transparency built in", es: "Transparencia FinOps integrada", pt: "Transparência de FinOps integrada" },
+    valueTitle: { en: "Cost visibility per use case", es: "Visibilidad de costo por caso", pt: "Visibilidade de custo por caso" },
+    valueItems: {
+      en: ["Monthly token quota: 4,500,000", "Monthly estimated cost: $0.0226", "Per-case cost breakdown", "Real-time consumption tracking"],
+      es: ["Cuota de tokens mensual: 4.500.000", "Costo mensual estimado: $0,0226", "Desglose de costo por caso", "Seguimiento de consumo en tiempo real"],
+      pt: ["Cota de tokens mensal: 4.500.000", "Custo mensal estimado: $0,0226", "Divisão de custos por caso", "Rastreamento de consumo em tempo real"]
+    },
+    text: {
+      en: ["Here's where budgets become real. The system tracks every token consumed, by which model, in which use case, and at what cost.", "This level of visibility prevents surprises and enables smarter prioritization: you can see the cost-to-benefit ratio for every project.", "Financial ops and technical ops finally speak the same language."],
+      es: ["Aquí es donde los presupuestos se hacen reales. El sistema rastrea cada token consumido, por qué modelo, en qué caso de uso y a qué costo.", "Este nivel de visibilidad previene sorpresas y permite una priorización más inteligente: puedes ver la relación costo-beneficio para cada proyecto.", "Las ops financieras y las ops técnicas finalmente hablan el mismo idioma."],
+      pt: ["É aqui que os orçamentos se tornam reais. O sistema rastreia cada token consumido, por qual modelo, em qual caso de uso e a que custo.", "Este nível de visibilidade evita surpresas e permite uma priorização mais inteligente: você pode ver a relação custo-benefício para cada projeto.", "FinOps e TechOps finalmente falam a mesma língua."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "admin",
+      adminTab: "tokenCost"
+    },
+    audio: {
+      en: "Tokens and cost. Every AI use case has a price tag, and you're looking at it right here. Real quota, real consumption, real cost per model. This is the FinOps backbone that lets you scale with confidence: you're not guessing at costs, you're managing them.",
+      es: "Tokens y costo. Cada caso de uso de IA tiene una etiqueta de precio, y lo estás viendo aquí mismo. Cuota real, consumo real, costo real por modelo. Esta es la columna vertebral de FinOps que te permite escalar con confianza: no estás adivinando costos, los estás gestionando.",
+      pt: "Tokens e custo. Cada caso de uso de IA tem uma etiqueta de preço, e você está olhando para ela agora. Cota real, consumo real, custo real por modelo. Este é o backbone de FinOps que permite que você escale com confiança: você não está adivinhando custos, está gerenciando-os."
+    }
+  },
+  {
+    title: { en: "Admin session - Metrics tab", es: "Sesión de admin - Pestaña de métricas", pt: "Sessão de admin - Aba de métricas" },
+    duration: 22,
+    heading: { en: "Continuous improvement signals", es: "Señales de mejora continua", pt: "Sinais de melhoria contínua" },
+    valueTitle: { en: "Quality & throughput", es: "Calidad y rendimiento", pt: "Qualidade e rendimento" },
+    valueItems: {
+      en: ["Approval rate trending", "Technical readiness pass rate", "Average cycle time to decision", "Top components by use", "Bottleneck identification"],
+      es: ["Tasa de aprobación en tendencia", "Tasa de aprobación técnica", "Tiempo promedio de ciclo a decisión", "Componentes principales por uso", "Identificación de cuellos de botella"],
+      pt: ["Taxa de aprovação em tendência", "Taxa de aprovação técnica", "Tempo médio de ciclo até decisão", "Componentes principais por uso", "Identificação de gargalos"]
+    },
+    text: {
+      en: ["Metrics is where you tune the engine. This tab shows approval velocity, technical readiness, cycle time, and which components are getting used most.", "Use this to spot bottlenecks: if ideas are getting stuck in validation, you see it. If one component keeps failing technical review, you know to invest there.", "Continuous feedback loop—constant improvement."],
+      es: ["Métricas es donde afinas el motor. Esta pestaña muestra velocidad de aprobación, preparación técnica, tiempo de ciclo y qué componentes se usan más.", "Úsalo para detectar cuellos de botella: si las ideas se atascan en validación, lo ves. Si un componente falla constantemente en revisión técnica, sabes dónde invertir.", "Ciclo de retroalimentación continua—mejora constante."],
+      pt: ["Métricas é onde você afina o motor. Esta aba mostra velocidade de aprovação, prontidão técnica, tempo de ciclo e quais componentes estão sendo mais utilizados.", "Use isso para identificar gargalos: se as ideias ficam presas na validação, você vê. Se um componente falha constantemente na revisão técnica, você sabe onde investir.", "Loop de feedback contínuo—melhoria constante."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "admin",
+      adminTab: "metrics"
+    },
+    audio: {
+      en: "Metrics is your improvement dashboard. You see approval trends, technical readiness, cycle times, and which patterns are working. Is validation slowing things down? Do users gravitate toward certain components? This data drives smarter decisions about process, investment, and team capacity.",
+      es: "Métricas es tu panel de mejora. Ves tendencias de aprobación, preparación técnica, tiempos de ciclo y qué patrones funcionan. ¿La validación ralentiza las cosas? ¿Los usuarios gravitan hacia ciertos componentes? Estos datos impulsan decisiones más inteligentes sobre proceso, inversión y capacidad del equipo.",
+      pt: "Métricas é seu painel de melhoria. Você vê tendências de aprovação, prontidão técnica, tempos de ciclo e quais padrões funcionam. A validação está desacelerando as coisas? Os usuários gravitam para certos componentes? Esses dados impulsionam decisões mais inteligentes sobre processo, investimento e capacidade da equipe."
+    }
+  },
+  {
+    title: { en: "Conclusion - The full cycle", es: "Conclusión - El ciclo completo", pt: "Conclusão - O ciclo completo" },
+    duration: 26,
+    heading: { en: "From idea to impact, end to end", es: "De la idea al impacto, de principio a fin", pt: "Da ideia ao impacto, de ponta a ponta" },
+    valueTitle: { en: "One platform", es: "Una plataforma", pt: "Uma plataforma" },
+    valueItems: {
+      en: ["Users capture structured ideas", "AI validates and packages solutions", "Leaders see real-time governance", "Teams execute with confidence", "Continuous improvement feedback"],
+      es: ["Los usuarios capturan ideas estructuradas", "La IA valida y empaqueta soluciones", "Los líderes ven gobernanza en tiempo real", "Los equipos ejecutan con confianza", "Retroalimentación de mejora continua"],
+      pt: ["Usuários capturam ideias estruturadas", "IA valida e empacota soluções", "Líderes veem governança em tempo real", "Equipes executam com confiança", "Feedback de melhoria contínua"]
+    },
+    text: {
+      en: ["We've walked through the complete cycle: from user capture to admin governance.", "Every step removes friction, adds intelligence, and maintains alignment.", "This is what 'end to end' means: one tool, one data model, one source of truth—for users, architects, analysts, and leaders alike.", "Ideas don't get lost in email. Decisions aren't made in silos. Growth is intentional, visible, and auditable."],
+      es: ["Hemos recorrido el ciclo completo: desde captura de usuario hasta gobernanza de admin.", "Cada paso elimina fricción, añade inteligencia y mantiene la alineación.", "Esto es lo que significa 'de principio a fin': una herramienta, un modelo de datos, una única fuente de verdad—para usuarios, arquitectos, analistas y líderes por igual.", "Las ideas no se pierden en el correo electrónico. Las decisiones no se toman en silos. El crecimiento es intencional, visible y auditable."],
+      pt: ["Percorremos o ciclo completo: desde captura do usuário até governança de admin.", "Cada etapa remove atrito, adiciona inteligência e mantém o alinhamento.", "É isto que significa 'de ponta a ponta': uma ferramenta, um modelo de dados, uma única fonte de verdade—para usuários, arquitetos, analistas e líderes.", "Ideias não se perdem no email. Decisões não são tomadas em silos. O crescimento é intencional, visível e auditável."]
+    },
+    appState: {
+      uiLanguage: "en",
+      showProjectInfo: true,
+      view: "executiveDashboard"
+    },
+    audio: {
+      en: "Thank you for watching. AI Value Hub brings together user capture, intelligent validation, real-time governance, and execution confidence in one platform. You saw how ideas flow from users into structured data, how AI accelerates qualification, and how leaders get visibility into cost, quality, and impact. This is how modern innovation operations work: transparent, aligned, and built for scale. We're excited to help your organization move at this pace.",
+      es: "Gracias por ver. AI Value Hub reúne captura de usuario, validación inteligente, gobernanza en tiempo real y confianza en ejecución en una plataforma. Viste cómo las ideas fluyen de usuarios hacia datos estructurados, cómo la IA acelera la calificación y cómo los líderes obtienen visibilidad sobre costo, calidad e impacto. Así es como funcionan las operaciones de innovación modernas: transparentes, alineadas y construidas para escala. Estamos emocionados de ayudar a tu organización a moverse a este ritmo.",
+      pt: "Obrigado por assistir. AI Value Hub reúne captura de usuário, validação inteligente, governança em tempo real e confiança em execução em uma plataforma. Você viu como as ideias fluem de usuários para dados estruturados, como a IA acelera a qualificação e como os líderes obtêm visibilidade de custo, qualidade e impacto. É assim que as operações de inovação modernas funcionam: transparentes, alinhadas e construídas para escala. Estamos entusiasmados em ajudar sua organização a se mover nesse ritmo."
+    }
+  }
+];
+
+let currentLang = "en";
+let current = 0;
+let playing = true;
+let elapsed = 0;
+let tick = null;
+let audioEnabled = false;
+let focusLive = false;
+const executedStepActions = new Set();
+let selectedVoice = null;
+let transitionTimeout = null;
+
+function getLocalizedText(value, lang = currentLang) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value[lang]) return value[lang];
+  if (typeof value === "object" && value["en"]) return value["en"];
+  return "";
+}
+
+function applyFrameScale(scaleValue) {
+  const scale = Number(scaleValue);
+  const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+  document.documentElement.style.setProperty("--frame-scale", String(safeScale));
+}
+
+function syncStepToLiveApp(forceActions = false) {
+  const frame = document.getElementById("appFrame");
+  const step = STEPS[current];
+  if (!frame || !frame.contentWindow || !step?.appState) {
+    return;
+  }
+
+  const payload = { ...step.appState };
+  if (Array.isArray(step.appState.demoActions)) {
+    const actionKey = "step-action-" + current;
+    const canRunActions = forceActions || !executedStepActions.has(actionKey);
+    if (canRunActions) {
+      payload.demoActions = step.appState.demoActions;
+      executedStepActions.add(actionKey);
+    } else {
+      delete payload.demoActions;
+    }
+  }
+
+  frame.contentWindow.postMessage(
+    {
+      type: "AIHUB_DEMO_NAVIGATE",
+      payload,
+    },
+    "*",
+  );
+
+  if (Array.isArray(payload.demoActions) && payload.demoActions.length > 0) {
+    const followUpPayload = { ...step.appState };
+    delete followUpPayload.demoActions;
+    const followUpDelays = [1400, 2800];
+    followUpDelays.forEach((delayMs) => setTimeout(() => {
+      if (!frame.contentWindow) {
+        return;
+      }
+      frame.contentWindow.postMessage(
+        {
+          type: "AIHUB_DEMO_NAVIGATE",
+          payload: followUpPayload,
+        },
+        "*",
+      );
+    }, delayMs));
+  }
+}
+
+function pickNarratorVoiceForLang(lang) {
+  if (!window.speechSynthesis) {
+    return null;
+  }
+
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) {
+    return null;
+  }
+
+  const langMap = {
+    en: ["en-US", "en-GB", "en"],
+    es: ["es-ES", "es-MX", "es"],
+    pt: ["pt-PT", "pt-BR", "pt"]
+  };
+
+  const femaleHints = ["female", "woman", "samantha", "aria", "zira", "jenny", "libby", "eva", "sonia", "susan", "michelle", "katja", "moira", "victoria", "karen"];
+  const targetLangs = langMap[lang] || [lang];
+  
+  let filteredVoices = voices.filter((voice) => {
+    const voiceLang = (voice.lang || "").toLowerCase();
+    return targetLangs.some(tl => voiceLang.startsWith(tl));
+  });
+
+  if (filteredVoices.length === 0) {
+    filteredVoices = voices;
+  }
+
+  const preferred = filteredVoices.find((voice) => {
+    const label = `${voice.name} ${voice.voiceURI}`.toLowerCase();
+    return femaleHints.some((hint) => label.includes(hint));
+  });
+
+  return preferred || filteredVoices[0] || null;
+}
+
+function showSessionTransition(title, subtitle, durationMs = 2100) {
+  const overlay = document.getElementById("sessionTransition");
+  if (!overlay) {
+    return;
+  }
+
+  document.getElementById("sessionTransitionTitle").textContent = title;
+  document.getElementById("sessionTransitionSub").textContent = subtitle;
+
+  overlay.classList.remove("show");
+  void overlay.offsetWidth;
+  overlay.classList.add("show");
+
+  if (transitionTimeout) {
+    clearTimeout(transitionTimeout);
+  }
+  transitionTimeout = setTimeout(() => {
+    overlay.classList.remove("show");
+  }, durationMs);
+}
+
+function renderChapters() {
+  const wrap = document.getElementById("chapters");
+  wrap.innerHTML = "";
+  STEPS.forEach((_, idx) => {
+    const n = document.createElement("div");
+    const cls = idx < current ? "chap done" : idx === current ? "chap active" : "chap";
+    n.className = cls;
+    n.title = getLocalizedText(STEPS[idx].title);
+    n.onclick = () => goTo(idx);
+    wrap.appendChild(n);
+  });
+}
+
+function renderStep() {
+  const s = STEPS[current];
+  document.getElementById("sceneTitle").textContent = getLocalizedText(s.title);
+  document.getElementById("sideHeading").textContent = getLocalizedText(s.heading);
+
+  const valueBox = document.getElementById("valueBox");
+  const valueItems = getLocalizedText(s.valueItems);
+  const itemsHTML = valueItems.map(i => {
+    const description = LANG_TEXTS[currentLang].metricDescriptions[i] || "";
+    const tooltipHTML = description ? `<div class="tooltip">${description}</div>` : "";
+    return `<li>${i}${tooltipHTML}</li>`;
+  }).join("");
+  valueBox.innerHTML = "<h3>" + getLocalizedText(s.valueTitle) + "</h3><ul class='value-list'>" + itemsHTML + "</ul>";
+
+  const narr = document.getElementById("narration");
+  const textItems = getLocalizedText(s.text);
+  narr.innerHTML = textItems.map(t => "<p>" + t + "</p>").join("") +
+    "<div class='tip'>" + LANG_TEXTS[currentLang].liveNote(LIVE_URL) + "</div>";
+
+  document.getElementById("counter").textContent = LANG_TEXTS[currentLang].counter(current + 1, STEPS.length);
+  renderChapters();
+  updateTimer();
+  syncStepToLiveApp();
+}
+
+function updateTimer() {
+  const s = STEPS[current];
+  const mm = Math.floor(elapsed / 60);
+  const ss = String(elapsed % 60).padStart(2, "0");
+  const total = "0:" + String(s.duration).padStart(2, "0");
+  document.getElementById("timer").textContent = (playing ? "|| " : "> ") + mm + ":" + ss + " / " + total;
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function speakStep() {
+  if (!audioEnabled || !window.speechSynthesis) return;
+  stopSpeech();
+  selectedVoice = pickNarratorVoiceForLang(currentLang);
+  const audioText = getLocalizedText(STEPS[current].audio);
+  const u = new SpeechSynthesisUtterance(audioText);
+  
+  const langMap = { en: "en-US", es: "es-ES", pt: "pt-BR" };
+  u.lang = langMap[currentLang] || "en-US";
+  
+  if (selectedVoice) {
+    u.voice = selectedVoice;
+  }
+  u.rate = 0.95;
+  u.pitch = 1.1;
+  u.volume = 1;
+  u.onend = () => {
+    if (playing) {
+      if (current < STEPS.length - 1) {
+        goTo(current + 1);
+      } else {
+        playing = false;
+        document.getElementById("btnPlay").textContent = LANG_TEXTS[currentLang].play;
+        if (tick) clearInterval(tick);
+      }
+    }
+  };
+  window.speechSynthesis.speak(u);
+}
+
+function resetTick() {
+  if (tick) clearInterval(tick);
+  if (!playing) return;
+  tick = setInterval(() => {
+    elapsed += 1;
+    updateTimer();
+    if (elapsed >= STEPS[current].duration) {
+      // When audio is on, let speech onend drive advancement — don't cut it off
+      if (audioEnabled && window.speechSynthesis && window.speechSynthesis.speaking) return;
+      if (current < STEPS.length - 1) {
+        goTo(current + 1);
+      } else {
+        playing = false;
+        document.getElementById("btnPlay").textContent = LANG_TEXTS[currentLang].play;
+        if (tick) clearInterval(tick);
+      }
+    }
+  }, 1000);
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= STEPS.length) return;
+  const previous = current;
+  current = idx;
+  elapsed = 0;
+  renderStep();
+  if (previous === 2 && idx === 3) {
+    const transitionTitles = {
+      en: "Switching to Admin Session",
+      es: "Cambio a sesión de admin",
+      pt: "Alterando para sessão de administrador"
+    };
+    const transitionSubs = {
+      en: "Closing user context, signing in as admin, and loading dashboard insights.",
+      es: "Cerrando contexto de usuario, iniciando sesión como admin y cargando insights del panel.",
+      pt: "Fechando contexto do usuário, fazendo login como admin e carregando insights do painel."
+    };
+    showSessionTransition(
+      transitionTitles[currentLang],
+      transitionSubs[currentLang],
+      2200,
+    );
+  }
+  resetTick();
+  speakStep();
+}
+
+function updateUIText() {
+  document.getElementById("btnPrev").textContent = LANG_TEXTS[currentLang].previous;
+  document.getElementById("btnNext").textContent = LANG_TEXTS[currentLang].next;
+  document.getElementById("btnRestart").textContent = LANG_TEXTS[currentLang].restart;
+  document.getElementById("btnPlay").textContent = playing ? LANG_TEXTS[currentLang].pause : LANG_TEXTS[currentLang].play;
+  document.getElementById("btnAudio").textContent = audioEnabled ? LANG_TEXTS[currentLang].audioOn : LANG_TEXTS[currentLang].audioOff;
+  document.getElementById("btnOpenApp").textContent = LANG_TEXTS[currentLang].openApp;
+  document.getElementById("btnReloadApp").textContent = LANG_TEXTS[currentLang].reloadApp;
+  document.getElementById("btnSyncStep").textContent = LANG_TEXTS[currentLang].syncStep;
+  document.getElementById("btnFocusLive").textContent = focusLive ? LANG_TEXTS[currentLang].showGuide : LANG_TEXTS[currentLang].focusLive;
+  document.querySelector(".fit-label").textContent = LANG_TEXTS[currentLang].fit;
+  document.getElementById("timer").textContent = LANG_TEXTS[currentLang].playToStart;
+  renderStep();
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  selectedVoice = null;
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+  });
+  updateUIText();
+  if (audioEnabled) speakStep();
+}
+
+document.getElementById("btnPrev").onclick = () => goTo(current - 1);
+document.getElementById("btnNext").onclick = () => goTo(current + 1);
+document.getElementById("btnRestart").onclick = () => {
+  executedStepActions.clear();
+  playing = true;
+  updateUIText();
+  goTo(0);
+};
+document.getElementById("btnPlay").onclick = () => {
+  playing = !playing;
+  document.getElementById("btnPlay").textContent = playing ? LANG_TEXTS[currentLang].pause : LANG_TEXTS[currentLang].play;
+  if (playing) {
+    resetTick();
+    speakStep();
+  } else {
+    if (tick) clearInterval(tick);
+    stopSpeech();
+  }
+};
+document.getElementById("btnAudio").onclick = () => {
+  audioEnabled = !audioEnabled;
+  document.getElementById("btnAudio").textContent = audioEnabled ? LANG_TEXTS[currentLang].audioOn : LANG_TEXTS[currentLang].audioOff;
+  if (audioEnabled) speakStep(); else stopSpeech();
+};
+document.getElementById("btnOpenApp").onclick = () => window.open(LIVE_URL, "_blank");
+document.getElementById("btnReloadApp").onclick = () => {
+  const frame = document.getElementById("appFrame");
+  frame.src = LIVE_URL;
+  setTimeout(() => syncStepToLiveApp(true), 700);
+};
+document.getElementById("btnSyncStep").onclick = () => syncStepToLiveApp(true);
+document.getElementById("btnFocusLive").onclick = () => {
+  focusLive = !focusLive;
+  document.querySelector(".shell").classList.toggle("focus-live", focusLive);
+  document.getElementById("btnFocusLive").textContent = focusLive ? LANG_TEXTS[currentLang].showGuide : LANG_TEXTS[currentLang].focusLive;
+};
+
+["EN", "ES", "PT"].forEach(langCode => {
+  const langId = "lang" + langCode;
+  const element = document.getElementById(langId);
+  if (element) {
+    element.onclick = () => setLanguage(langCode.toLowerCase());
+  }
+});
+
+document.getElementById("fitScale").onchange = (event) => {
+  applyFrameScale(event.target.value);
+};
+
+document.getElementById("appFrame").addEventListener("load", () => {
+  setTimeout(() => syncStepToLiveApp(true), 350);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") goTo(current + 1);
+  if (e.key === "ArrowLeft") goTo(current - 1);
+  if (e.key.toLowerCase() === "p") document.getElementById("btnPlay").click();
+});
+
+updateUIText();
+applyFrameScale(document.getElementById("fitScale").value);
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    selectedVoice = pickNarratorVoiceForLang(currentLang);
+  };
+}
+</script>
+</body>
+</html>

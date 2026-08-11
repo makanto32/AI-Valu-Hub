@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Value Hub - Arquitectura Microsoft Fabric + Dashboard</title>
+  <style>
+    :root {
+      --bg: #071322;
+      --bg-2: #0f2440;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.14);
+      --line: rgba(255, 255, 255, 0.15);
+      --text: #f7fbff;
+      --muted: #bdd2ea;
+      --brand: #00b7c3;
+      --brand-2: #1e88ff;
+      --ok: #34d399;
+      --warn: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(50rem 30rem at 10% 0%, rgba(0, 183, 195, 0.22), transparent 60%),
+        radial-gradient(50rem 30rem at 100% 0%, rgba(30, 136, 255, 0.2), transparent 58%),
+        linear-gradient(160deg, var(--bg), var(--bg-2));
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 20px 52px;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+    }
+
+    .kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      color: #8bd4ff;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4.2vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      max-width: 930px;
+      line-height: 1.55;
+    }
+
+    .chips {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .flow {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+      padding: 14px;
+      min-height: 150px;
+    }
+
+    .node .tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #97ddff;
+      margin-bottom: 8px;
+    }
+
+    .node h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .node p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .legend {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .legend-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .legend-item strong { color: #dff5ff; }
+
+    .status {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .pill.ok {
+      background: rgba(52, 211, 153, 0.18);
+      border-color: rgba(52, 211, 153, 0.35);
+      color: #bbf7d0;
+    }
+
+    .pill.warn {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+    }
+
+    .footer {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="kicker">Vista de arquitectura live</p>
+      <h1>Integracion Microsoft Fabric para Dashboard Ejecutivo</h1>
+      <p class="subtitle">
+        Esta vista muestra el flujo operativo desde AI Value Hub en Azure Container Apps hacia un modelo semantico en Microsoft Fabric / Power BI, que alimenta el dashboard ejecutivo con metricas consistentes de ideas, estatus y costos.
+      </p>
+      <div class="chips">
+        <span class="chip">Runtime: Azure Container Apps</span>
+        <span class="chip">Data path: API snapshot -> Push dataset</span>
+        <span class="chip">Analytics: Fabric semantic model</span>
+        <span class="chip">Consumption: Executive Dashboard</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Flujo End-to-End</h2>
+      <p>La actualizacion semantica se ejecuta con scripts de sync y deja disponible un payload de metricas para consumo inmediato en la vista de dashboard.</p>
+      <div class="flow">
+        <article class="node">
+          <div class="tag">Paso 1</div>
+          <h3>AI Hub API (Azure)</h3>
+          <p>La API consolida ideas por tenant y expone snapshot de metricas administrativas y ejecutivas.</p>
+        </article>
+        <article class="node">
+          <div class="tag">Paso 2</div>
+          <h3>Fabric Sync Script</h3>
+          <p>El script toma snapshot JSON y publica una fila en la tabla semantica via API de Power BI.</p>
+        </article>
+        <article class="node">
+          <div class="tag">Paso 3</div>
+          <h3>Semantic Model (Fabric)</h3>
+          <p>El dataset centraliza payload_json por tenant, con version de timestamp para trazabilidad.</p>
+        </article>
+        <article class="node">
+          <div class="tag">Paso 4</div>
+          <h3>Dashboard Ejecutivo</h3>
+          <p>La UI consulta executeQueries DAX y renderiza KPIs: total ideas, aprobadas, ratio y costos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Componentes Clave</h2>
+      <div class="legend">
+        <div class="legend-item">
+          <strong>metrics_provider.py</strong>
+          <p>Selecciona provider local, semantic file o Power BI usando variables de entorno.</p>
+        </div>
+        <div class="legend-item">
+          <strong>fabric_medallion.py</strong>
+          <p>Genera capas bronze, silver y gold para trazabilidad y control de transformaciones.</p>
+        </div>
+        <div class="legend-item">
+          <strong>scripts/fabric-provision-semantic.ps1</strong>
+          <p>Provisiona workspace y semantic model para despliegue reproducible.</p>
+        </div>
+        <div class="legend-item">
+          <strong>scripts/fabric-sync-semantic.ps1</strong>
+          <p>Sincroniza snapshots desde API hacia dataset activo en Fabric.</p>
+        </div>
+      </div>
+      <div class="status">
+        <span class="pill ok">Power BI provider activo</span>
+        <span class="pill ok">Dashboard conectado a semantic model</span>
+        <span class="pill warn">Sync programado opcional (no requerido para demo)</span>
+      </div>
+    </section>
+
+    <p class="footer">AI Value Hub | Arquitectura live de integracion Microsoft Fabric + Dashboard</p>
+  </main>
+</body>
+</html>

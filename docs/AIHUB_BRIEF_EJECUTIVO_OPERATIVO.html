@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Opportunity Hub - Brief Ejecutivo y Operativo</title>
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --bg-soft: #f9f6ef;
+      --paper: #fffdf9;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #e6ddcf;
+      --brand: #0f766e;
+      --brand-2: #b45309;
+      --ok: #166534;
+      --warn: #b45309;
+      --info: #0c4a6e;
+      --shadow: 0 24px 64px -44px rgba(15, 23, 42, 0.65);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(58rem 40rem at 0% 0%, rgba(15,118,110,.12), transparent 60%),
+        radial-gradient(50rem 38rem at 100% 0%, rgba(180,83,9,.12), transparent 58%),
+        linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--ink);
+      font-family: "Segoe UI", "Trebuchet MS", "Franklin Gothic Medium", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    .hero {
+      background: linear-gradient(155deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--brand);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 1.03rem;
+    }
+
+    .chips {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.84);
+      padding: 20px;
+      box-shadow: 0 18px 46px -38px rgba(15, 23, 42, 0.55);
+    }
+
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 1.36rem;
+      letter-spacing: -0.01em;
+    }
+
+    .section p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: var(--paper);
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: .95rem;
+    }
+
+    .metric {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .metric-sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .value-flow {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px;
+      min-height: 112px;
+      position: relative;
+    }
+
+    .node .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      color: var(--brand);
+      margin-bottom: 6px;
+    }
+
+    .node strong {
+      display: block;
+      font-size: .98rem;
+      margin-bottom: 6px;
+    }
+
+    .node p {
+      margin: 0;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: var(--brand-2);
+      letter-spacing: .08em;
+    }
+
+    .timeline {
+      margin-top: 12px;
+      border: 1px dashed #d8cbb6;
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,251,244,.92));
+    }
+
+    .step {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 120px 1fr;
+      padding: 10px 0;
+      border-bottom: 1px solid #efe5d9;
+    }
+
+    .step:last-child { border-bottom: none; }
+
+    .phase {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--info);
+    }
+
+    .step h4 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .step p {
+      margin: 4px 0 0;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    .pill-row {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #fff;
+    }
+
+    .foot {
+      margin-top: 16px;
+      font-size: .86rem;
+      color: #657184;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .step { grid-template-columns: 1fr; }
+      .arrow { display: none; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { max-width: none; padding: 0; }
+      .hero, .section { box-shadow: none; break-inside: avoid; }
+      .section { margin-top: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="kicker">AI Opportunity Hub | Brief de posicionamiento</p>
+      <h1>Resumen Ejecutivo y Operativo para clientes</h1>
+      <p class="subtitle">
+        AI Opportunity Hub acelera la transformacion de ideas en iniciativas viables, priorizadas y listas para ejecucion.
+        Une filtro de negocio, validacion tecnica inicial y paquete de arquitectura para reducir riesgo, costo de discovery
+        y tiempo de decision.
+      </p>
+      <div class="chips">
+        <span class="chip">Enfoque: ejecutivo + operativo</span>
+        <span class="chip">Estado actual: MVP1 implementado / MVP2 en progreso</span>
+        <span class="chip">Modelo operativo: tenant-aware + trazabilidad</span>
+        <span class="chip">Destino runtime agentico: Microsoft Foundry</span>
+      </div>
+    </section>
+
+    <section class="section" id="objetivo">
+      <h2>1) Objetivo de la herramienta</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Objetivo estrategico</h3>
+          <p>
+            Convertir el pipeline de ideas de IA en una capacidad repetible de negocio: detectar valor temprano,
+            descartar rapido lo no viable y concentrar inversion en casos con impacto real.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Objetivo operativo</h3>
+          <p>
+            Estandarizar intake, evaluacion por contexto de tenant, validacion tecnica y salida en formato accionable
+            para patrocinadores, equipos de datos/IA y arquitectura.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="problema">
+      <h2>2) Problema que resuelve</h2>
+      <div class="grid-4">
+        <article class="card">
+          <h3>Backlog sin priorizacion</h3>
+          <p>Muchas ideas, poca claridad sobre cuales tienen retorno y factibilidad.</p>
+        </article>
+        <article class="card">
+          <h3>Discovery costoso</h3>
+          <p>Demasiado tiempo en analisis inicial sin artefactos comparables entre areas.</p>
+        </article>
+        <article class="card">
+          <h3>Decision fragmentada</h3>
+          <p>Negocio, tecnologia y riesgo evaluan en tiempos y formatos distintos.</p>
+        </article>
+        <article class="card">
+          <h3>Baja trazabilidad</h3>
+          <p>Dificultad para explicar por que una idea avanza, se pausa o se descarta.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="valor">
+      <h2>3) Valor entregado (diagrama de valor #1)</h2>
+      <p>
+        Cadena de valor operacional de AI Opportunity Hub desde la captura de idea hasta una decision ejecutiva accionable.
+      </p>
+      <div class="value-flow" aria-label="diagrama de valor">
+        <article class="node">
+          <span class="tag">Entrada</span>
+          <strong>Idea intake estructurado</strong>
+          <p>Captura uniforme de problema, objetivo, stakeholders y criterio de exito.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Filtro 1</span>
+          <strong>Validacion de negocio</strong>
+          <p>Prioriza por impacto esperado, urgencia y alineacion con lineas base.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Filtro 2</span>
+          <strong>Validacion tecnica inicial</strong>
+          <p>Evalua datos, integracion, complejidad y riesgos de entrega.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Salida</span>
+          <strong>Architecture Package</strong>
+          <p>Componentes, integraciones, riesgos y pasos de despliegue para ejecutar.</p>
+        </article>
+      </div>
+
+      <div class="grid-4" style="margin-top: 12px;">
+        <article class="card">
+          <div class="metric">-35% a -55%</div>
+          <div class="metric-sub">reduccion esperada en tiempo de evaluacion inicial</div>
+        </article>
+        <article class="card">
+          <div class="metric">+20% a +40%</div>
+          <div class="metric-sub">mejor precision de priorizacion del backlog</div>
+        </article>
+        <article class="card">
+          <div class="metric">1 solo lenguaje</div>
+          <div class="metric-sub">para negocio, arquitectura y riesgo</div>
+        </article>
+        <article class="card">
+          <div class="metric">Trazabilidad total</div>
+          <div class="metric-sub">motivo de rechazo o avance por idea</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="potencial">
+      <h2>4) Potencial que ofrece (diagrama de valor #2)</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Escala de producto</h3>
+          <p>
+            Evoluciona de herramienta de priorizacion a plataforma de gobierno de iniciativas IA multi-tenant,
+            con politicas por industria, integracion a Foundry y operacion enterprise en Container Apps.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Portafolio multi area</span>
+            <span class="pill">Governance por politicas</span>
+            <span class="pill">Integracion segura (Key Vault)</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Escala de negocio</h3>
+          <p>
+            Permite ofrecer un modelo de "IA Opportunity Office" para clientes: discovery continuo,
+            priorizacion trimestral y conversion a iniciativas ejecutables con menor friccion.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Mayor conversion idea → iniciativa</span>
+            <span class="pill">Menor riesgo de inversion</span>
+            <span class="pill">Time-to-value mas corto</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="grid-4" style="margin-top: 12px;">
+        <article class="card">
+          <h3>Nivel 1 | Eficiencia</h3>
+          <p>Automatiza filtros iniciales y libera horas de analistas senior.</p>
+        </article>
+        <article class="card">
+          <h3>Nivel 2 | Calidad de decision</h3>
+          <p>Reduce sesgo al comparar ideas bajo criterios uniformes.</p>
+        </article>
+        <article class="card">
+          <h3>Nivel 3 | Ejecucion</h3>
+          <p>Entrega arquitectura inicial y siguientes pasos listos para operar.</p>
+        </article>
+        <article class="card">
+          <h3>Nivel 4 | Gobierno</h3>
+          <p>Instala disciplina de portafolio y mejora continua por metrica.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="socializacion">
+      <h2>5) Ruta para socializar con clientes (90 dias)</h2>
+      <p>
+        Ruta recomendada para venta consultiva y adopcion operativa, con evidencia de valor desde la semana 2.
+      </p>
+      <div class="timeline">
+        <div class="step">
+          <div class="phase">Fase 0 (sem 1)</div>
+          <div>
+            <h4>Alineacion ejecutiva</h4>
+            <p>Workshop de 90 minutos con sponsor, operaciones, TI y riesgo para acordar objetivo, KPIs y backlog candidato.</p>
+            <div class="pill-row">
+              <span class="pill">Salida: charter de valor</span>
+              <span class="pill">Decision: alcance piloto</span>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phase">Fase 1 (sem 2-4)</div>
+          <div>
+            <h4>Piloto controlado</h4>
+            <p>Ingreso de 15-30 ideas reales, aplicacion de filtros y presentacion quincenal de resultados con trazabilidad.</p>
+            <div class="pill-row">
+              <span class="pill">Salida: top iniciativas priorizadas</span>
+              <span class="pill">KPI: tiempo de evaluacion</span>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phase">Fase 2 (mes 2)</div>
+          <div>
+            <h4>Operacionalizacion</h4>
+            <p>Definicion de cadencia mensual, roles RACI y criterios de aprobacion para comite de portafolio IA.</p>
+            <div class="pill-row">
+              <span class="pill">Salida: playbook operativo</span>
+              <span class="pill">KPI: tasa idea → iniciativa</span>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phase">Fase 3 (mes 3)</div>
+          <div>
+            <h4>Escalamiento y propuesta anual</h4>
+            <p>Expansion a otras unidades y presentacion de roadmap de capacidades (governance, integraciones, automatizacion avanzada).</p>
+            <div class="pill-row">
+              <span class="pill">Salida: business case anual</span>
+              <span class="pill">KPI: ROI esperado 12 meses</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mensaje-cliente">
+      <h2>6) Narrativa recomendada para cliente</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Mensaje ejecutivo (C-level)</h3>
+          <p>
+            "AI Opportunity Hub no es otro backlog de ideas. Es un sistema para decidir mejor y mas rapido
+            donde invertir en IA, con evidencia, trazabilidad y una ruta concreta a ejecucion."
+          </p>
+        </article>
+        <article class="card">
+          <h3>Mensaje operativo (lideres de entrega)</h3>
+          <p>
+            "Reciben un flujo claro de trabajo, criterios estandarizados, motivos de rechazo explicitos
+            y paquetes de arquitectura listos para mover iniciativas del analisis a la implementacion."
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <p class="foot">
+      Documento preparado para uso comercial y operativo. Sugerencia de formato final: HTML para revision colaborativa,
+      luego exportar a PDF para comite ejecutivo y a PPT para sesiones de venta consultiva.
+    </p>
+  </main>
+</body>
+</html>

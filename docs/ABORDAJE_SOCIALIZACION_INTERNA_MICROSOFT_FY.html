@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Opportunity Hub | Abordaje para Socializacion Interna Microsoft (FY)</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --paper: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe3ef;
+      --brand: #0078d4;
+      --brand2: #0f766e;
+      --accent: #b45309;
+      --shadow: 0 20px 50px -38px rgba(15, 23, 42, 0.75);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(60rem 40rem at 0% 0%, rgba(0,120,212,.12), transparent 60%),
+        radial-gradient(44rem 34rem at 100% 0%, rgba(15,118,110,.10), transparent 58%),
+        linear-gradient(180deg, #f8fbff, var(--bg));
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 24px 18px 52px;
+    }
+
+    .hero,
+    .section {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .section {
+      margin-top: 14px;
+      box-shadow: 0 16px 42px -36px rgba(15, 23, 42, 0.7);
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.05;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+      letter-spacing: -.01em;
+    }
+
+    p { margin: 8px 0 0; color: var(--muted); }
+
+    .chips {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .grid-2 {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      padding: 12px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .card p {
+      margin: 0;
+      font-size: .92rem;
+    }
+
+    .value-chain {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+      min-height: 100px;
+    }
+
+    .tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--brand2);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: .94rem;
+    }
+
+    .node p {
+      font-size: .86rem;
+      margin: 0;
+    }
+
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .table-wrap {
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: .9rem;
+    }
+
+    th {
+      background: #f0f6ff;
+      color: #0b1f3a;
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .timeline {
+      margin-top: 10px;
+      border: 1px dashed #cbd6e6;
+      border-radius: 14px;
+      padding: 10px;
+      background: #fbfdff;
+    }
+
+    .step {
+      border-bottom: 1px solid #e6edf7;
+      padding: 10px 2px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 150px 1fr;
+    }
+
+    .step:last-child { border-bottom: none; }
+
+    .phase {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    .step h4 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .step p {
+      margin: 4px 0 0;
+      font-size: .9rem;
+    }
+
+    .check {
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .check div {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    .foot {
+      margin-top: 14px;
+      font-size: .85rem;
+      color: #607086;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    @media (max-width: 680px) {
+      .arrow { display: none; }
+      .step { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .hero, .section { box-shadow: none; break-inside: avoid; }
+      .page { max-width: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="kicker">Playbook interno FY | Microsoft</p>
+      <h1>Abordaje para socializar AI Opportunity Hub con equipos internos</h1>
+      <p>
+        Objetivo: posicionar AI Opportunity Hub como acelerador de estrategia FY para conversion de oportunidades,
+        crecimiento de consumo de plataforma y ejecucion gobernada de iniciativas de IA con clientes.
+      </p>
+      <div class="chips">
+        <span class="chip">Enfoque: ejecutivo + operativo</span>
+        <span class="chip">Duracion recomendada: 30-60-90 dias</span>
+        <span class="chip">Resultado esperado: inclusion en planes de cuenta FY</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>1) Narrativa de posicionamiento interno</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Mensaje ejecutivo (1 frase)</h3>
+          <p>
+            AI Opportunity Hub convierte ideas dispersas de IA en un embudo de oportunidades priorizadas,
+            trazables y listas para ejecucion, mejorando calidad de pipeline para el proximo año fiscal.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Mensaje operativo (1 frase)</h3>
+          <p>
+            Estandariza intake, validacion de negocio y filtro tecnico para que account teams, especialistas
+            y delivery trabajen sobre el mismo criterio de valor y factibilidad.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2) Diagrama de valor interno (para Microsoft)</h2>
+      <p>Usa este flujo en reuniones para explicar como la propuesta impacta estrategia comercial y de ejecucion.</p>
+      <div class="value-chain">
+        <article class="node">
+          <span class="tag">Pipeline</span>
+          <strong>Mas oportunidades calificadas</strong>
+          <p>Mejora calidad del backlog de ideas en cuentas objetivo.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Velocity</span>
+          <strong>Decision mas rapida</strong>
+          <p>Reduce ciclos de discovery y acelera pasos hacia propuesta.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Attach</span>
+          <strong>Mayor attach de plataforma</strong>
+          <p>Conecta oportunidades a servicios de datos, IA y gobierno.</p>
+        </article>
+        <div class="arrow">→</div>
+        <article class="node">
+          <span class="tag">Outcome</span>
+          <strong>Mayor win-rate con menos riesgo</strong>
+          <p>Trazabilidad y claridad de valor para sponsor y comite.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3) Mapa de stakeholders internos y mensaje por rol</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Stakeholder</th>
+              <th>Que le importa</th>
+              <th>Mensaje de valor</th>
+              <th>Evidencia/KPI sugerido</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Account Executive / Account Team</td>
+              <td>Pipeline y avance de cuentas</td>
+              <td>Embudo de ideas mas calificado para convertir en iniciativas vendibles</td>
+              <td># oportunidades priorizadas por cuenta, tiempo a propuesta</td>
+            </tr>
+            <tr>
+              <td>Solution Specialist (Data & AI)</td>
+              <td>Attach y consumo de plataforma</td>
+              <td>Detecta y estructura casos con mayor probabilidad de aterrizar en workloads</td>
+              <td>Attach rate de servicios, consumo incremental estimado</td>
+            </tr>
+            <tr>
+              <td>Cloud Solution Architect</td>
+              <td>Factibilidad y arquitectura</td>
+              <td>Reduce retrabajo con validacion tecnica temprana y paquete inicial de arquitectura</td>
+              <td>Tiempo de definicion tecnica, menos iteraciones de rediseño</td>
+            </tr>
+            <tr>
+              <td>Customer Success / Delivery</td>
+              <td>Ejecucion y adopcion</td>
+              <td>Entradas mas maduras para delivery, con alcance y riesgos mas claros</td>
+              <td>Tasa idea->proyecto, velocidad de arranque de implementacion</td>
+            </tr>
+            <tr>
+              <td>Industry Lead / Strategy Lead</td>
+              <td>Narrativa de industria y diferenciacion</td>
+              <td>Permite una oferta recurrente de IA Opportunity Office por vertical</td>
+              <td># cuentas con motion activo por industria</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4) KPIs para demostrar valor en el FY</h2>
+      <div class="grid-3">
+        <article class="card">
+          <h3>KPI 1 | Pipeline Calificado</h3>
+          <p>Numero de ideas evaluadas vs. numero de iniciativas priorizadas por cuenta.</p>
+        </article>
+        <article class="card">
+          <h3>KPI 2 | Time-to-Decision</h3>
+          <p>Dias promedio desde intake hasta decision de avanzar/ajustar/descartar.</p>
+        </article>
+        <article class="card">
+          <h3>KPI 3 | Attach de Plataforma</h3>
+          <p>Porcentaje de iniciativas priorizadas que aterrizan en stack objetivo.</p>
+        </article>
+        <article class="card">
+          <h3>KPI 4 | Conversion Comercial</h3>
+          <p>Iniciativas priorizadas que se convierten en propuesta formal/piloto.</p>
+        </article>
+        <article class="card">
+          <h3>KPI 5 | Velocidad de Ejecucion</h3>
+          <p>Tiempo desde aprobacion inicial hasta plan de implementacion.</p>
+        </article>
+        <article class="card">
+          <h3>KPI 6 | Calidad de Decision</h3>
+          <p>Porcentaje de decisiones respaldadas con trazabilidad completa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>5) Ruta de socializacion interna (30-60-90 dias)</h2>
+      <div class="timeline">
+        <div class="step">
+          <div class="phase">Dia 0-30</div>
+          <div>
+            <h4>Alineacion y sponsor interno</h4>
+            <p>Identificar sponsor, mapear 3-5 cuentas objetivo y validar narrativa por rol con account team y especialistas.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phase">Dia 31-60</div>
+          <div>
+            <h4>Prueba de valor en cuentas seleccionadas</h4>
+            <p>Ejecutar sesiones de opportunity shaping con backlog real y demostrar mejora de priorizacion y velocidad.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phase">Dia 61-90</div>
+          <div>
+            <h4>Escalamiento a motion fiscal</h4>
+            <p>Consolidar resultados, incluir KPIs en QBR interno y proponer inclusion formal en plan FY por industria/cuenta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>6) Estructura de reunion interna (45 minutos)</h2>
+      <div class="check">
+        <div>5 min: Contexto FY y problema actual de conversion de ideas IA.</div>
+        <div>10 min: Diagrama de valor interno (pipeline -> velocity -> attach -> outcome).</div>
+        <div>10 min: Casos de uso por cuenta/industria y impacto esperado.</div>
+        <div>10 min: KPIs, baseline y objetivos de 90 dias.</div>
+        <div>10 min: Acuerdos de ownership, siguiente comite y plan de comunicacion.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>7) One-pager de valor (plantilla de uso inmediato)</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Problema actual</h3>
+          <p>[Describe 2-3 sintomas observables en pipeline y discovery de cuentas objetivo]</p>
+        </article>
+        <article class="card">
+          <h3>Valor propuesto</h3>
+          <p>[Como AI Opportunity Hub mejora velocidad, calidad de decision y conversion comercial]</p>
+        </article>
+        <article class="card">
+          <h3>KPIs de exito (90 dias)</h3>
+          <p>[Define 3 KPIs con baseline y objetivo porcentual]</p>
+        </article>
+        <article class="card">
+          <h3>Pedido al equipo interno</h3>
+          <p>[Sponsor, cuentas piloto, frecuencia de revisiones y compromiso de adopcion]</p>
+        </article>
+      </div>
+    </section>
+
+    <p class="foot">
+      Nota: adapta esta narrativa a las prioridades oficiales de tu unidad para el proximo año fiscal.
+      Recomendacion de uso: revisar en HTML, exportar a PDF para comite interno y convertir a PPT para socializacion masiva.
+    </p>
+  </main>
+</body>
+</html>

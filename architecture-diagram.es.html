@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Value Hub - Arquitectura Detallada</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --bg-2: #edf4ff;
+      --card: rgba(255, 255, 255, 0.9);
+      --card-strong: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: rgba(15, 23, 42, 0.1);
+      --brand: #0078d4;
+      --brand-2: #00a3a3;
+      --brand-3: #2563eb;
+      --accent: #8b5cf6;
+      --success: #0f9d87;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 24px 60px -38px rgba(15, 23, 42, 0.75);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(60rem 40rem at 0% 0%, rgba(0, 120, 212, 0.14), transparent 60%),
+        radial-gradient(45rem 30rem at 100% 0%, rgba(0, 163, 163, 0.13), transparent 54%),
+        linear-gradient(180deg, var(--bg-2), var(--bg));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+      position: relative;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: auto;
+      pointer-events: none;
+      border-radius: 999px;
+      filter: blur(42px);
+      opacity: 0.48;
+      z-index: 0;
+    }
+
+    .ambient.a { width: 320px; height: 320px; left: -120px; top: 18%; background: linear-gradient(135deg, #0078d4, #00a3a3); }
+    .ambient.b { width: 260px; height: 260px; right: -90px; top: 7%; background: linear-gradient(135deg, #2563eb, #8b5cf6); }
+
+    .hero,
+    .section,
+    .card,
+    .note {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,255,255,.84));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -100px auto;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle at 30% 30%, rgba(0,120,212,.2), transparent 60%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .meta-row,
+    .chip-row,
+    .section-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .meta-row { margin-top: 18px; }
+
+    .chip,
+    .mini-chip,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.9);
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .chip strong, .mini-chip strong, .pill strong { font-weight: 800; }
+
+    .section-links {
+      margin-top: 16px;
+    }
+
+    .section-links a {
+      text-decoration: none;
+      color: #0f172a;
+    }
+
+    .section-links a:hover { color: var(--brand); }
+
+    .section {
+      margin-top: 18px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 18px 48px -36px rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(10px);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section p.lead,
+    .section .small,
+    .note {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .overview-grid {
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      margin-top: 14px;
+    }
+
+    .card {
+      background: var(--card-strong);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 16px 36px -30px rgba(15, 23, 42, 0.7);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .flow {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    .flow-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      align-items: stretch;
+    }
+
+    .node {
+      position: relative;
+      min-height: 92px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,251,255,.94));
+      box-shadow: 0 16px 38px -32px rgba(15, 23, 42, 0.8);
+    }
+
+    .node .kicker {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--brand);
+      margin-bottom: 8px;
+    }
+
+    .node h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .node p {
+      margin: 0;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand-3);
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .two-col {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+      vertical-align: top;
+      font-size: .94rem;
+    }
+
+    th {
+      background: #f8fbff;
+      color: #0f172a;
+      font-size: .8rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .compact-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .compact-list li { margin: 8px 0; }
+
+    .pill.blue { background: rgba(0,120,212,.08); color: #075985; }
+    .pill.teal { background: rgba(0,163,163,.08); color: #0f766e; }
+    .pill.purple { background: rgba(139,92,246,.1); color: #6d28d9; }
+    .pill.gold { background: rgba(217,119,6,.12); color: #92400e; }
+    .pill.green { background: rgba(15,157,135,.1); color: #0f766e; }
+
+    .note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,120,212,.15);
+      background: linear-gradient(135deg, rgba(0,120,212,.06), rgba(0,163,163,.06));
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .92rem;
+      text-align: center;
+    }
+
+    @media (min-width: 900px) {
+      .hero { padding: 34px; }
+      .section { padding: 26px; }
+      .flow { gap: 14px; }
+      .flow-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient a"></div>
+  <div class="ambient b"></div>
+
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">AI Value Hub</p>
+      <h1>Arquitectura Detallada</h1>
+      <p class="subtitle">
+        Plataforma empresarial de descubrimiento semántico con orquestación basada en skills, servicios de Azure e inteligencia de sesión persistente.
+      </p>
+
+      <div class="meta-row">
+        <span class="chip"><strong>Versión:</strong> 2.1</span>
+        <span class="chip"><strong>Alcance:</strong> Descubrimiento, Viabilidad, Arquitectura Objetivo</span>
+        <span class="chip"><strong>Hosting:</strong> Azure Container Apps</span>
+        <span class="chip"><strong>Persistencia:</strong> PostgreSQL + Blob + Azure OpenAI</span>
+      </div>
+
+      <div class="section-links" aria-label="Navegación">
+        <a class="mini-chip" href="#overview">Vista General</a>
+        <a class="mini-chip" href="#flow">Flujo End-to-End</a>
+        <a class="mini-chip" href="#components">Componentes</a>
+        <a class="mini-chip" href="#persistence">Datos y Persistencia</a>
+        <a class="mini-chip" href="#security">Seguridad y Operación</a>
+      </div>
+
+      <p class="note">
+        Intención de diseño: mantener un flujo conversacional resiliente incluso si la persistencia cloud o el enriquecimiento por IA no están disponibles, habilitando comportamiento empresarial más rico cuando las dependencias de Azure están configuradas.
+      </p>
+    </section>
+
+    <section id="overview" class="section">
+      <h2>1. Vista General del Sistema</h2>
+      <p class="lead">
+        La solución combina una experiencia conversacional guiada para negocio, un orquestador determinístico de skills y enriquecimiento opcional por IA para pasar de una idea inicial a entregables de arquitectura.
+      </p>
+
+      <div class="grid overview-grid">
+        <article class="card">
+          <h3>Usuario de Negocio</h3>
+          <p>Envía ideas mediante un flujo natural de conversación y recibe retroalimentación estructurada de inmediato.</p>
+        </article>
+        <article class="card">
+          <h3>Frontend React + Vite</h3>
+          <p>Entrega la experiencia guiada, vistas por etapa y salidas de arquitectura embebidas.</p>
+        </article>
+        <article class="card">
+          <h3>Capa API FastAPI</h3>
+          <p>Gestiona la orquestación, validaciones de política, persistencia y coordinación de herramientas.</p>
+        </article>
+        <article class="card">
+          <h3>Orquestador de Skills</h3>
+          <p>Enruta la conversación al skill o agente correcto según etapa, rol y contexto.</p>
+        </article>
+        <article class="card">
+          <h3>Registro de Skills de Dominio</h3>
+          <p>Cataloga skills de negocio, técnicos y de arquitectura con prompts e instrucciones versionadas.</p>
+        </article>
+        <article class="card">
+          <h3>Persistencia de Conocimiento</h3>
+          <p>Almacena estado de sesión, contexto, decisiones y artefactos para enriquecimiento progresivo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="flow" class="section">
+      <h2>2. Flujo End-to-End</h2>
+      <p class="lead">La conversación se mantiene orgánica, pero cada etapa es explícita y persistible.</p>
+
+      <div class="flow">
+        <div class="flow-row">
+          <div class="node">
+            <div class="kicker">Paso 1</div>
+            <h4>Intake de Negocio</h4>
+            <p>El usuario describe la oportunidad en lenguaje natural, en su idioma preferido.</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node">
+            <div class="kicker">Paso 2</div>
+            <h4>Orquestación de Skills</h4>
+            <p>Un enrutador determinístico selecciona el skill de negocio o técnico adecuado.</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node">
+            <div class="kicker">Paso 3</div>
+            <h4>Validación y Estado</h4>
+            <p>Las salidas estructuradas actualizan IdeaCase, resultado de validación y estado de compuerta.</p>
+          </div>
+        </div>
+
+        <div class="flow-row">
+          <div class="node">
+            <div class="kicker">Paso 4</div>
+            <h4>Persistencia</h4>
+            <p>Estado de la idea, bitácora de decisiones y artefactos se escriben en PostgreSQL y Blob.</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node">
+            <div class="kicker">Paso 5</div>
+            <h4>Enriquecimiento de Contexto</h4>
+            <p>Se recuperan y refrescan documentos relevantes, memoria de sesión y contexto de tenant.</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node">
+            <div class="kicker">Paso 6</div>
+            <h4>Entregables de Arquitectura</h4>
+            <p>La plataforma genera paquete de arquitectura, diagramas y resúmenes de sesión.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="components" class="section">
+      <h2>3. Componentes</h2>
+      <div class="two-col">
+        <article class="card">
+          <h3>Frontend</h3>
+          <p>UI React + Vite con formularios guiados, interacciones conversacionales y vistas por rol.</p>
+          <ul class="compact-list">
+            <li>Experiencia de intake de negocio</li>
+            <li>Experiencia de revisión técnica</li>
+            <li>Experiencia de administración y gobierno</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>API y Orquestación</h3>
+          <p>FastAPI provee la capa de orquestación y expone endpoints para conversación, estado y artefactos.</p>
+          <ul class="compact-list">
+            <li>Transiciones de etapa</li>
+            <li>Enrutamiento de agentes</li>
+            <li>Hooks de prompts y telemetría</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Registro de Skills</h3>
+          <p>Registro central de skills de dominio, prompts determinísticos e instrucciones versionadas.</p>
+          <ul class="compact-list">
+            <li>Skill de Intake de Negocio</li>
+            <li>Skill de Viabilidad de Negocio</li>
+            <li>Skill de Validación Técnica</li>
+            <li>Compositor de Respuesta</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Capa de IA</h3>
+          <p>Modelos de Azure OpenAI / Foundry aportan razonamiento, resumen y generación localizada de respuestas.</p>
+          <ul class="compact-list">
+            <li>Detección de idioma</li>
+            <li>Canonicalización</li>
+            <li>Localización de respuestas</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="note">
+        La arquitectura privilegia una sola superficie conversacional para el usuario, mientras internamente enruta a skills y agentes especializados.
+      </div>
+    </section>
+
+    <section id="persistence" class="section">
+      <h2>4. Datos y Persistencia</h2>
+      <div class="two-col">
+        <article class="card">
+          <h3>PostgreSQL Flexible Server</h3>
+          <p>Almacena perfil de tenant, estado de ideas, decisiones, versiones de prompts y telemetría de agentes.</p>
+        </article>
+        <article class="card">
+          <h3>Azure Blob Storage</h3>
+          <p>Persiste PDFs, exportables, evidencia, artefactos de arquitectura y paquetes conversacionales.</p>
+        </article>
+        <article class="card">
+          <h3>Azure AI Search</h3>
+          <p>Indexa conocimiento contextual para recuperación híbrida semántica entre documentos y sesiones.</p>
+        </article>
+        <article class="card">
+          <h3>Inteligencia de Sesión Persistente</h3>
+          <p>La memoria de sesión enriquece la conversación sin perder trazabilidad ni límites por etapa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="security" class="section">
+      <h2>5. Seguridad y Operación</h2>
+      <div class="two-col">
+        <article class="card">
+          <h3>Managed Identity + Key Vault</h3>
+          <p>Acceso seguro entre servicios Azure sin secretos embebidos.</p>
+        </article>
+        <article class="card">
+          <h3>Observabilidad</h3>
+          <p>Application Insights y Log Analytics capturan latencia, costo, tokens, calidad y trazabilidad.</p>
+        </article>
+        <article class="card">
+          <h3>Gobierno de Prompts</h3>
+          <p>Los prompts son versionados y auditables para mantener comportamiento estable entre despliegues.</p>
+        </article>
+        <article class="card">
+          <h3>Modelo de Despliegue</h3>
+          <p>Azure Container Apps empaqueta frontend, API y workers en una huella cloud-native repetible.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>6. Hoja de Ruta</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fase</th>
+            <th>Alcance</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill blue">Fase 1</span></td>
+            <td>Intake de ideas, validación de negocio, estado de caso, UI simple</td>
+            <td>Captura y validación base</td>
+          </tr>
+          <tr>
+            <td><span class="pill teal">Fase 2</span></td>
+            <td>Validación técnica, paquete de arquitectura, compositor de respuestas</td>
+            <td>Flujo end-to-end negocio + técnica</td>
+          </tr>
+          <tr>
+            <td><span class="pill purple">Fase 3</span></td>
+            <td>Company Context Engine con setup rápido y documentos</td>
+            <td>Personalización por cliente</td>
+          </tr>
+          <tr>
+            <td><span class="pill gold">Fase 4</span></td>
+            <td>Centro admin con tokens, costo, ROI y prompts</td>
+            <td>Gobernanza y FinOps</td>
+          </tr>
+          <tr>
+            <td><span class="pill green">Fase 5</span></td>
+            <td>IaC multi-tenant y despliegue empaquetado</td>
+            <td>Producto reutilizable por cliente</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>7. Notas de Arquitectura</h2>
+      <div class="two-col">
+        <article class="card">
+          <h3>Por qué este diseño funciona</h3>
+          <p>Mantiene la experiencia conversacional del usuario preservando estado machine-readable para operación empresarial.</p>
+        </article>
+        <article class="card">
+          <h3>Qué sigue abstraído</h3>
+          <p>La implementación concreta de agentes, políticas de retrieval y telemetría avanzada queda para fases posteriores.</p>
+        </article>
+      </div>
+    </section>
+
+    <p class="footer">AI Value Hub - Arquitectura Detallada | Referencia Empresarial</p>
+  </main>
+</body>
+</html>
